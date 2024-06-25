@@ -1,6 +1,5 @@
-
 # ========================
-# Zitadel-config TF-Module
+# zitadel-config TF-Module
 # ========================
 
 # =============
@@ -40,7 +39,6 @@ variable "zitadel_org" {
       manager_role  = string # manager Role: https://zitadel.com/docs/guides/manage/console/managers#roles
 
       project_name = string # Zitadel Users Project name
-      #project_role = string # Zitadel Users Project role
 
       saml_app_name = string # Zitadel SAML App (YC Federation integration)
       yc_org_id     = string # Yandex Cloud Organization Id

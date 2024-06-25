@@ -1,7 +1,6 @@
 # ========================
-# Zitadel-deploy TF-Module
+# zitadel-deploy TF-Module
 # ========================
-
 
 # ==========================
 # Infra & Network attributes
@@ -16,8 +15,6 @@ variable "yc_infra" {
       dns_zone_name = string
       network       = string # VPC Network name
       subnet1       = string # VPC subnet1 name
-      #zone_id2      = string # VPC zone Id and Subnet for HA deployment
-      #subnet2       = string
     }
   )
 }
@@ -48,16 +45,15 @@ variable "zitadel_vm" {
   description = "Zitadel VM attributes"
   type = object(
     {
-      name         = string
-      version      = string # Zitadel version
-      vcpu         = number
-      ram          = number
-      disk_size    = number
-      image_family = string # Base OS image
-      port         = string
-      jwt_path     = string
-      admin_user   = string
-      #admin_pass     = string
+      name           = string
+      version        = string # Zitadel version
+      vcpu           = number
+      ram            = number
+      disk_size      = number
+      image_family   = string # Base OS image
+      port           = string
+      jwt_path       = string
+      admin_user     = string
       admin_key_file = string # Admin's SSH public key file
       cr_name        = string # Containers images regitsry name
       cr_base_image  = string

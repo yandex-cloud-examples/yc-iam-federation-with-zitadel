@@ -20,14 +20,6 @@ data "yandex_vpc_subnet" "subnet1" {
   name      = var.yc_infra.subnet1
 }
 
-# =============================================
-# Infra Subnet#2. If HA deployemnt is required.
-# =============================================
-#data "yandex_vpc_subnet" "subnet2" {
-#  folder_id = data.yandex_resourcemanager_folder.folder.id
-#  name      = var.yc_infra.subnet2
-#}
-
 # Create public ip address for VM
 resource "yandex_vpc_address" "vm_pub_ip" {
   folder_id = data.yandex_resourcemanager_folder.folder.id

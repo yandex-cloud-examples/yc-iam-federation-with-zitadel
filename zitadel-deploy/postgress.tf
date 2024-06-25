@@ -21,14 +21,6 @@ resource "yandex_mdb_postgresql_cluster" "pg_cluster" {
     zone      = var.yc_infra.zone_id
     subnet_id = data.yandex_vpc_subnet.subnet1.id
   }
-
-  # ============================
-  # If PG HA cluster is required
-  # ============================
-  #host {
-  #  zone      = var.yc_infra.zone_id2
-  #  subnet_id = data.yandex_vpc_subnet.subnet2.id
-  #}
 }
 
 resource "yandex_mdb_postgresql_user" "pg_user" {

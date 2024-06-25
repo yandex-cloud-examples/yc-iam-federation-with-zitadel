@@ -1,3 +1,7 @@
+# ==================================
+# Terraform & Provider Configuration
+# ==================================
+
 terraform {
   required_providers {
     local = {

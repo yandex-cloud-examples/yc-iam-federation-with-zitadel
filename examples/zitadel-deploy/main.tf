@@ -28,8 +28,6 @@ module "zitadel-deploy" {
     dns_zone_name = "mydomain-net"
     network       = "infra-net"
     subnet1       = "infra-subnet-b"
-    #zone_id2 = "ru-central1-d"  # If HA deployment is required
-    #subnet2  = "infra-subnet-d" #
   }
 
   # PostgreSQL MDB Cluster attributes
@@ -46,16 +44,15 @@ module "zitadel-deploy" {
 
   # Zitadel VM attributes
   zitadel_vm = {
-    name         = "zitadel-vm"
-    version      = "2.53.2"
-    vcpu         = 2
-    ram          = 8  # Gigabytes
-    disk_size    = 80 # Gigabytes
-    image_family = "ubuntu-2204-lts"
-    port         = "8443"
-    jwt_path     = "/home/myuser/.ssh"
-    admin_user   = "admin"
-    #admin_pass     = "Fr#dR3n48Ga-Mov"
+    name           = "zitadel-vm"
+    version        = "2.53.2"
+    vcpu           = 2
+    ram            = 8  # Gigabytes
+    disk_size      = 80 # Gigabytes
+    image_family   = "ubuntu-2204-lts"
+    port           = "8443"
+    jwt_path       = "/home/myuser/.ssh"
+    admin_user     = "admin"
     admin_key_file = "~/.ssh/id_ed25519.pub"
     cr_name        = "mirror.gcr.io"
     cr_base_image  = "ubuntu:22.04"

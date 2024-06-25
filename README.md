@@ -67,7 +67,7 @@
 
 ### Структура контейнера Zitadel <a id="container"/></a>
 
-Docker-контейнер с Zitadel собирается в процессе развёртывани виртуальной машины. 
+Docker-контейнер с `Zitadel` собирается в процессе развёртывани виртуальной машины. 
 
 Структура контейнера (состав компонентов) показана на схеме ниже.
 
@@ -124,7 +124,7 @@ Docker-контейнер с Zitadel собирается в процессе р
 
 Процесс работы с пользователями в Ziadel для предоставления им доступа в Yandex Cloud сводится к двум простым шагам:
 1. Создать пользователя типа `Human User`.
-2. Авторизовать (создать User Grant) созданного пользователя в нужном проекте.
+2. Авторизовать (создать `User Grant`) для этого пользователя в нужном проекте.
 
 После этого пользователь сможет аутентифицироваться в Yandex Cloud. К каким ресурсам у пользователя будет доступ после аутентификации, будет зависит от [набора ролей](https://yandex.cloud/ru/docs/iam/roles-reference), которые будут выданы его учетной записи на стороне облака.
 
@@ -224,10 +224,10 @@ Docker-контейнер с Zitadel собирается в процессе р
 ## Результаты развёртывания <a id="results"/></a>
 
 В результате развёртывания решения в Yandex Cloud будут созданы следующие объекты:
-* [федерация удостоверений](https://yandex.cloud/ru/docs/organization/concepts/add-federation) в указанной `организации`
-* `сертификат` [Let's Encrypt](https://letsencrypt.org/) для `IdP Zitadel` в сервисе [Certificate Manager](https://yandex.cloud/ru/docs/certificate-manager)
+* [Федерация удостоверений](https://yandex.cloud/ru/docs/organization/concepts/add-federation) в указанной `организации`
+* `Сертификат` [Let's Encrypt](https://letsencrypt.org/) для `IdP Zitadel` в сервисе [Certificate Manager](https://yandex.cloud/ru/docs/certificate-manager)
 * `IdP Zitadel` успешно взаимодействует с федерацией удостоверений со стороны Yandex Cloud
-* `запись в Yandex Cloud DNS` с публичным IP-адресом ВМ `zitadel-vm`
-* `учётные записи` пользователей в IdP Zitadel синхронизированы через федерацию в организацию Yandex Cloud
+* `Запись в Yandex Cloud DNS` с публичным IP-адресом ВМ `zitadel-vm`
+* `Учётные записи` пользователей в IdP Zitadel синхронизированы через федерацию в организацию Yandex Cloud
 
 После развёртывания решения останется выдать необходимые [роли](https://yandex.cloud/ru/docs/iam/roles-reference) на нужные облачные ресурсы для созданных в организации учётных записей пользователей.

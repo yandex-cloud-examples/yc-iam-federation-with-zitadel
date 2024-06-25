@@ -9,7 +9,7 @@ locals {
   jwt_key_file  = "${var.zitadel_vm.name}-sa.json"
 }
 
-// Service Account for Zitadel VM & their bindings
+# Service Account for Zitadel VM & their bindings
 resource "yandex_iam_service_account" "zita_vm_sa" {
   folder_id   = data.yandex_resourcemanager_folder.folder.id
   name        = "${var.zitadel_vm.name}-sa"
@@ -40,7 +40,7 @@ resource "yandex_resourcemanager_folder_iam_binding" "cm_certs" {
   members   = ["serviceAccount:${yandex_iam_service_account.zita_vm_sa.id}"]
 }
 
-// Prepare Zitadel provisioning script
+# Prepare Zitadel provisioning script
 locals {
   zita_setup_fn = "zita-setup.sh"
   zita_setup = templatefile("${path.module}/templates/zita-setup.tpl", {
@@ -59,7 +59,7 @@ locals {
   })
 }
 
-// Create Zitadel VM
+# Create Zitadel VM
 data "yandex_compute_image" "vm_image" {
   family = var.zitadel_vm.image_family
 }
@@ -87,8 +87,7 @@ resource "yandex_compute_instance" "zita_vm1" {
   }
 
   network_interface {
-    subnet_id = data.yandex_vpc_subnet.subnet1.id
-    #ip_address         = var.zitadel.ip4_int
+    subnet_id          = data.yandex_vpc_subnet.subnet1.id
     nat                = true
     nat_ip_address     = yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address
     security_group_ids = [yandex_vpc_security_group.vm_sg.id]

@@ -23,7 +23,6 @@ terraform {
   }
 }
 
-
 # ====================
 # Call usersgen module
 # ====================
@@ -39,7 +38,6 @@ module "usersgen" {
 # ===========================
 module "zitadel-config" {
   source = "../../zitadel-config"
-  # depends_on = [module.usersgen]
 
   system = {
     base_url = var.ZITA_BASE_URL
@@ -60,7 +58,6 @@ module "zitadel-config" {
     manager_role  = "ORG_USER_MANAGER"
 
     project_name = "yc-users"
-    #project_role = "user"
 
     saml_app_name = "yc-federation-saml"
     yc_org_id     = "bpfljqv8z325tbjhusm"

@@ -1,6 +1,7 @@
 # =======================
 # Users TF code generator
 # =======================
+
 locals {
   users_src = var.zitadel_users
   users_out = "../../zitadel-config/users.tf"
@@ -29,10 +30,4 @@ resource "local_file" "users_tf_file" {
   content         = join("", local.users_tf_data[*].user_tf_code)
   filename        = local.users_out
   file_permission = 644
-
-  /*
-  lifecycle {
-    ignore_changes = [content]
-  }
-  */
 }
