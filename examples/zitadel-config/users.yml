@@ -1,0 +1,18 @@
+# ==================
+# Yandex Cloud users
+# ==================
+
+zuser1:
+  fname: "First"
+  lname: "Firstov"
+  lang: "en"
+  email: "first@myorg.org"
+  pass: "Th3mVxPz5#mIDXlL7P"
+
+zuser2:
+  fname: "Second"
+  lname: "Secondov"
+  lang: "en"
+  email: "second@myorg.org"
+  pass: "Zu#315-Piv21"
+
