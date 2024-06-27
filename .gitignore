@@ -1,0 +1,25 @@
+# Ignore files
+*.tfstate
+*.backup
+*.tfstate.lock.info
+.terraform.lock.hcl
+*.zip
+*.lst
+
+# Directories
+.terraform/
+
+# SSH Keys
+*.pem
+
+# Backup files
+*.bak
+*.bkp
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore vscode files
+.vscode/
+*.code-workspace
+

@@ -17,14 +17,22 @@ echo "{ \"registry-mirrors\": [\"https://${CR_NAME}\"] }" > /etc/docker/daemon.j
 systemctl restart docker
 docker pull ${CR_BASE_IMAGE}
 
-ZITA_IMAGE=zitadel
+ZITA_IMAGE=${CNTR_NAME}
 chmod +x files/docker-entrypoint.sh
 
 # Build Zitadel docker image
-docker build -t $ZITA_IMAGE:${ZT_VER} --build-arg BASE_IMAGE=${CR_BASE_IMAGE} --build-arg ZT_VER=${ZT_VER} .
+docker build -t $ZITA_IMAGE:${ZT_VER} \
+  --build-arg BASE_IMAGE=${CR_BASE_IMAGE} \
+  --build-arg ZT_SRC=${ZT_SRC} \
+  --build-arg ZT_VER=${ZT_VER} \
+  --build-arg ZT_FILE=${ZT_FILE} \
+  --build-arg YQ_SRC=${YQ_SRC} \
+  --build-arg YQ_VER=${YQ_VER} \
+  --build-arg YQ_FILE=${YQ_FILE} \
+.
 
 # Configure Zitadel PostgreSQL Database
-docker run --rm --name=init1 --hostname=init1 --network=host \
+docker run --rm --name=zinit1 --hostname=zinit1 --network=host \
   --volume /etc/localtime:/etc/localtime:ro \
   --env ZITADEL_DATABASE_POSTGRES_HOST=${DB_HOST} \
   --env ZITADEL_DATABASE_POSTGRES_PORT=${DB_PORT} \
@@ -40,7 +48,7 @@ $ZITA_IMAGE:${ZT_VER} init zitadel
 
 # Perform DB init and get JWT admin key from Zitadel
 mkdir -p /home/${ADMIN_NAME}/data
-docker create --name=init2 --hostname=init2 --network=host \
+docker create --name=zinit2 --hostname=zinit2 --network=host \
   --volume /etc/localtime:/etc/localtime:ro \
   --volume /home/${ADMIN_NAME}:/data \
   --env ZITADEL_FIRSTINSTANCE_ORG_NAME=SysOrg \
@@ -50,19 +58,19 @@ docker create --name=init2 --hostname=init2 --network=host \
   --env ZITADEL_FIRSTINSTANCE_ORG_MACHINE_MACHINE_USERNAME=${SA_NAME} \
   --env ZITADEL_FIRSTINSTANCE_ORG_MACHINE_MACHINE_NAME=Zitadel-Admin \
 $ZITA_IMAGE:${ZT_VER}
-docker start init2
+docker start zinit2
 
 # Wait for Zitadel is READY
 while ! curl -sf https://${VM_FQDN}:${VM_PORT}/debug/healthz; do sleep 5; done
 sleep 3
-docker stop init2
-docker rm init2
+docker stop zinit2
+docker rm zinit2
 
 # Create Zitadel Regular container
-docker create --name=zitadel --hostname=zitadel --network=host \
+docker create --name=${CNTR_NAME} --hostname=${CNTR_NAME} --network=host \
   --volume /etc/localtime:/etc/localtime:ro \
 $ZITA_IMAGE:${ZT_VER}
-docker start zitadel
+docker start ${CNTR_NAME}
 
 echo "# Schedule periodic Zitadel container reboot for LE cert update (every 62 days)" >> /var/spool/cron/crontabs/root
 echo "0 5 2 */2 * docker restart zitadel" >> /var/spool/cron/crontabs/root

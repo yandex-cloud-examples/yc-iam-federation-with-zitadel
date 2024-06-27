@@ -43,11 +43,17 @@ resource "yandex_resourcemanager_folder_iam_binding" "cm_certs" {
 # Prepare Zitadel provisioning script
 locals {
   zita_setup_fn = "zita-setup.sh"
-  zita_setup = templatefile("${path.module}/templates/zita-setup.tpl", {
-    ZT_VER        = var.zitadel_vm.version
+  zita_setup = templatefile("${path.module}/templates/zitadel-setup.tpl", {
+    CNTR_NAME     = var.zitadel_cntr.name
+    ZT_SRC        = var.zitadel_cntr.zitadel_source
+    ZT_VER        = var.zitadel_cntr.zitadel_version
+    ZT_FILE       = var.zitadel_cntr.zitadel_file
+    YQ_SRC        = var.zitadel_cntr.yq_source
+    YQ_VER        = var.zitadel_cntr.yq_version
+    YQ_FILE       = var.zitadel_cntr.yq_file
+    CR_NAME       = var.zitadel_cntr.cr_name
+    CR_BASE_IMAGE = var.zitadel_cntr.cr_base_image
     ADMIN_NAME    = var.zitadel_vm.admin_user
-    CR_NAME       = var.zitadel_vm.cr_name
-    CR_BASE_IMAGE = var.zitadel_vm.cr_base_image
     SA_NAME       = "${var.zitadel_vm.name}-sa"
     DB_HOST       = yandex_mdb_postgresql_cluster.pg_cluster.host.0.fqdn
     DB_PORT       = var.pg_cluster.db_port

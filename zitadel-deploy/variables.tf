@@ -38,6 +38,27 @@ variable "pg_cluster" {
   )
 }
 
+# ===================================
+# Zitadel Docker container attributes
+# ===================================
+variable "zitadel_cntr" {
+  description = "Zitadel Docker container attributes"
+  type = object(
+    {
+      name            = string
+      cr_name         = string # Container regitsry name
+      cr_base_image   = string # Container base image
+      zitadel_source  = string # Zitadel source URL/path
+      zitadel_version = string # Zitadel version
+      zitadel_file    = string # Zitadel archive file name
+      yq_source       = string # YQ Tool source URL/path
+      yq_version      = string # YQ Tool version
+      yq_file         = string # YQ Tool file name
+    }
+  )
+}
+
+
 # =====================
 # Zitadel VM attributes
 # =====================
@@ -46,7 +67,6 @@ variable "zitadel_vm" {
   type = object(
     {
       name           = string
-      version        = string # Zitadel version
       vcpu           = number
       ram            = number
       disk_size      = number
@@ -55,8 +75,6 @@ variable "zitadel_vm" {
       jwt_path       = string
       admin_user     = string
       admin_key_file = string # Admin's SSH public key file
-      cr_name        = string # Containers images regitsry name
-      cr_base_image  = string
     }
   )
 }

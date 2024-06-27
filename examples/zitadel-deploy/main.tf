@@ -42,10 +42,22 @@ module "zitadel-deploy" {
     db_port   = "6432"
   }
 
+  # Zitadel Docker container attributes
+  zitadel_cntr = {
+    name            = "zitadel"
+    cr_name         = "mirror.gcr.io"
+    cr_base_image   = "ubuntu:22.04"
+    zitadel_source  = "https://github.com/zitadel/zitadel/releases/download"
+    zitadel_version = "2.53.2"
+    zitadel_file    = "zitadel-linux-amd64.tar.gz"
+    yq_source       = "https://github.com/mikefarah/yq/releases/download"
+    yq_version      = "4.44.2"
+    yq_file         = "yq_linux_amd64"
+  }
+
   # Zitadel VM attributes
   zitadel_vm = {
     name           = "zitadel-vm"
-    version        = "2.53.2"
     vcpu           = 2
     ram            = 8  # Gigabytes
     disk_size      = 80 # Gigabytes
@@ -54,8 +66,6 @@ module "zitadel-deploy" {
     jwt_path       = "/home/myuser/.ssh"
     admin_user     = "admin"
     admin_key_file = "~/.ssh/id_ed25519.pub"
-    cr_name        = "mirror.gcr.io"
-    cr_base_image  = "ubuntu:22.04"
   }
 }
 

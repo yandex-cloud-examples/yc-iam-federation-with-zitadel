@@ -2,7 +2,12 @@ ARG BASE_IMAGE
 
 FROM $BASE_IMAGE
 
+ARG ZT_SRC
 ARG ZT_VER
+ARG ZT_FILE
+ARG YQ_SRC
+ARG YQ_VER
+ARG YQ_FILE
 
 RUN \
   # Install System Packages
@@ -12,16 +17,16 @@ RUN \
   curl -sL https://storage.yandexcloud.net/cloud-certs/CA.pem -o /usr/local/share/ca-certificates/yc-ca && \
   update-ca-certificates && \
   # Install yq tool
-  curl -sLO https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
-  mv yq_linux_amd64 /usr/local/bin/yq && \
+  curl -sLO $YQ_SRC/v$YQ_VER/$YQ_FILE && \
+  mv $YQ_FILE /usr/local/bin/yq && \
   chmod a+x /usr/local/bin/yq && \
   # Install target version of Zitadel
-  curl -sLO https://github.com/zitadel/zitadel/releases/download/v$ZT_VER/zitadel-linux-amd64.tar.gz && \
-  tar -zxf zitadel-linux-amd64.tar.gz && \
+  curl -sLO $ZT_SRC/v$ZT_VER/$ZT_FILE && \
+  tar -zxf $ZT_FILE --wildcards '*zitadel' --strip-components=1 && \
   mkdir -p /opt/zitadel && \
-  mv zitadel-linux-amd64/zitadel /opt/zitadel/ && \
+  mv zitadel /opt/zitadel/ && \
   # Clean Up
-  rm -rf zitadel-linux-amd64/ zitadel-linux-amd64.tar.gz install.sh && \
+  rm -f $ZT_FILE install.sh && \
   apt-get -y remove $DEV_PACKAGES && \
   apt-get -y autoremove && \
   apt-get clean && \
