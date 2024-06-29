@@ -47,3 +47,10 @@ variable "zitadel_org" {
     }
   )
 }
+
+# ===============
+# Zitadel Outputs
+# ===============
+output "yc_federation_url" {
+  value = "https://console.yandex.cloud/federations/${yandex_organizationmanager_saml_federation.yc_federation.id}"
+}

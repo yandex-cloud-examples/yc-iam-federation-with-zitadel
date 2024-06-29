@@ -65,3 +65,7 @@ module "zitadel-config" {
     yc_fed_descr  = "YC and Zitadel integration"
   }
 }
+
+output "yc_federation_url" {
+  value = module.zitadel-config.yc_federation_url
+}

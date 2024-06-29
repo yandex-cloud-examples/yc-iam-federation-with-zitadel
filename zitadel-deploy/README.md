@@ -85,5 +85,5 @@ Terraform модуль `zitadel-deploy` выполняет следующие д
 
 | Параметр (переменная) | Описание |
 | - | -
-| `zita_base_url` | URL с указанием FQDN запущенного экземпляра Zitadel, например, `https://zitadel-vm.my-domain.net:8443`.
+| `zitadel_base_url` | URL с указанием FQDN развёрнутого IdP Zitadel, например, `https://zitadel-vm.my-domain.net:8443`.
 | `jwt_key_full_path` | Полный путь к файлу с ключём сервисной учётной записи, например, `~/.ssh/zitadel-vm-sa.json`.

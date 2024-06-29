@@ -14,6 +14,7 @@
 * [Внешние зависимости](#ext-dep)
 * [Порядок развёртывание решения](#deploy)
 * [Результаты резвёртывания](#results)
+* [Удаление развёртывания и освобождение ресурсов](#uninstall)
 
 
 ## Описание решения <a id="overview"/></a>
@@ -126,7 +127,7 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 1. Создать пользователя типа `Human User`.
 2. Авторизовать (создать `User Grant`) для этого пользователя в нужном проекте.
 
-После этого пользователь сможет аутентифицироваться в Yandex Cloud. К каким ресурсам у пользователя будет доступ после аутентификации, будет зависит от [набора ролей](https://yandex.cloud/ru/docs/iam/roles-reference), которые будут выданы его учетной записи на стороне облака.
+После этого пользователь сможет аутентифицироваться в Yandex Cloud. Состав облачных ресурсов и права доступа к ним будут зависеть от [набора ролей](https://yandex.cloud/ru/docs/iam/roles-reference), которые [должны быть выданы](https://yandex.cloud/ru/docs/iam/operations/roles/grant) администратором его учетной записи в облачной организации.
 
 
 ## Развёртывание решения <a id="deployment"/></a>
@@ -157,10 +158,10 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 
 Развёртывание решения под управлением ОС `Windows` не тестировалось.
 
-0. Перед началом развертывания необходимо убедиться, что необходимые для развертывания инструменты установлены и настроены:
+0. Перед началом развертывания необходимо убедиться, что все необходимые инструменты установлены и настроены:
 * `yc CLI` - [установлен](https://yandex.cloud/ru/docs/cli/operations/install-cli) и [настроен](https://yandex.cloud/ru/docs/cli/operations/profile/profile-create#create)
 * `Terraform` - [установлен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform) и [настроен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#configure-provider)
-* `Python3` и модули `requests` и `jwt` для него установлены.
+* `Python3`, а также модули [requests](https://pypi.org/project/requests) и [jwt](https://pypi.org/project/jwt) установлены.
 
 1. Загрузить решение из репозитория на [github.com](https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel):
     ```bash
@@ -174,12 +175,12 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 
 3. `Важно!` Убедиться, что все [внешние зависимости](#ext-dep) уже созданы!
 
-4. Проверить значения переменных в файле [main.tf](./examples/zitadel-deploy/main.tf) и скорректировать их при необходимости. 
+4. Проверить значения переменных в файле [main.tf](./examples/zitadel-deploy/main.tf) и скорректировать их. 
 
 5. Подготовить среду для развёртывания:
     ```bash
-    source env-setup.sh
     terraform init
+    source env-setup.sh
     ```
 
 6. Выполнить развёртывание `zitadel-deploy`:
@@ -198,24 +199,24 @@ Docker-контейнер с `Zitadel` собирается в процессе 
     cd ../zitadel-config
     ```
 
-9. Проверить значения переменных в файле [main.tf](./examples/zitadel-config/main.tf) и скорректировать их при необходимости.
+9. Проверить значения переменных в файле [main.tf](./examples/zitadel-config/main.tf) и скорректировать их.
 
 
 10. Скорректировать информацию о пользователях в файле [users.yml](./examples/zitadel-config/users.yml)
 
 
-11. Выполнить подготовку среды окружения и инициализацию Terraform:
+11. Подготовить среду для развёртывания:
     ```bash
-    source env-setup.sh
     terraform init
+    source env-setup.sh
     ```
 
-12. Выполнить развёртывание `zitadel-config`:
+12. Выполнить развёртывание `zitadel-config` и генерацию файла с пользовательcкими ресурсами - `users.tf`:
     ```bash
     terraform apply
     ```
 
-13. Выполнить создание пользовательских ресурсов по результатм генерации `users.tf`:
+13. Выполнить развёртывание пользовательских ресурсов из файла `users.tf`:
     ```bash
     terraform apply
     ```
@@ -231,3 +232,46 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 * `Учётные записи` пользователей в IdP Zitadel синхронизированы через федерацию в организацию Yandex Cloud
 
 После развёртывания решения останется выдать необходимые [роли](https://yandex.cloud/ru/docs/iam/roles-reference) на нужные облачные ресурсы для созданных в организации учётных записей пользователей.
+
+
+## Удаление развёртывания и освобождение ресурсов <a id="uninstall"/></a>
+
+Освобождение ресурсов должно выполняться в порядке обратном их созданию.
+
+1. Перейти в папку с примером развёртывания модуля [zitadel-config](./examples/zitadel-config/):
+    ```bash
+    cd yc-iam-federation-with-zitadel/examples/zitadel-config
+    ```
+
+2. Подготовить окружение:
+    ```bash
+    source env-setup.sh
+    ```
+
+3. Удалить ресурсы:
+    ```bash
+    terraform destroy
+    ```
+
+4. Перейти в папку с примером развёртывания модуля [zitadel-deploy](./examples/zitadel-deploy/):
+    ```bash
+    cd ../zitadel-deploy
+    ```
+
+5. Подготовить окружение:
+    ```bash
+    source env-setup.sh
+    ```
+
+6. Удалить ресурсы:
+    ```bash
+    terraform destroy
+    ```
+
+7. Удалить каталог с проектом (при необходимости)
+
+    Выйти на уровень выше из проектного каталога и выполнить команду:
+   ```bash
+   rm -rf yc-iam-federation-with-zitadel
+   ```
+

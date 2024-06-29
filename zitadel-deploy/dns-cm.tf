@@ -21,7 +21,7 @@ resource "yandex_cm_certificate" "vm_le_cert" {
   folder_id   = data.yandex_resourcemanager_folder.folder.id
   name        = var.zitadel_vm.name
   description = "LE certificate for the ${var.zitadel_vm.name} VM"
-  domains     = ["${local.zita_fqdn}"]
+  domains     = ["${local.zitadel_fqdn}"]
   managed {
     challenge_type = "DNS_CNAME"
   }

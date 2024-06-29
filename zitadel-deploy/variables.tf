@@ -83,8 +83,8 @@ variable "zitadel_vm" {
 # Zitadel Outputs
 # ===============
 
-output "zita_base_url" {
-  value = local.zita_base_url
+output "zitadel_base_url" {
+  value = local.zitadel_base_url
 }
 
 output "jwt_key_full_path" {

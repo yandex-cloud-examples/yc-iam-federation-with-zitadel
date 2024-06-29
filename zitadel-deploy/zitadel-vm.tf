@@ -3,10 +3,10 @@
 # ====================
 
 locals {
-  zita_fqdn     = "${var.zitadel_vm.name}.${trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")}"
-  zita_endpoint = "${local.zita_fqdn}:${var.zitadel_vm.port}"
-  zita_base_url = "https://${local.zita_endpoint}"
-  jwt_key_file  = "${var.zitadel_vm.name}-sa.json"
+  zitadel_fqdn     = "${var.zitadel_vm.name}.${trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")}"
+  zitadel_endpoint = "${local.zitadel_fqdn}:${var.zitadel_vm.port}"
+  zitadel_base_url = "https://${local.zitadel_endpoint}"
+  jwt_key_file     = "${var.zitadel_vm.name}-sa.json"
 }
 
 # Service Account for Zitadel VM & their bindings
@@ -42,8 +42,8 @@ resource "yandex_resourcemanager_folder_iam_binding" "cm_certs" {
 
 # Prepare Zitadel provisioning script
 locals {
-  zita_setup_fn = "zita-setup.sh"
-  zita_setup = templatefile("${path.module}/templates/zitadel-setup.tpl", {
+  zitadel_setup_fn = "zitadel-setup.sh"
+  zitadel_setup = templatefile("${path.module}/templates/zitadel-setup.tpl", {
     CNTR_NAME     = var.zitadel_cntr.name
     ZT_SRC        = var.zitadel_cntr.zitadel_source
     ZT_VER        = var.zitadel_cntr.zitadel_version
@@ -60,7 +60,7 @@ locals {
     DB_NAME       = var.pg_cluster.db_name
     DB_USER       = var.pg_cluster.db_user
     DB_PASS       = var.pg_cluster.db_pass
-    VM_FQDN       = local.zita_fqdn
+    VM_FQDN       = local.zitadel_fqdn
     VM_PORT       = var.zitadel_vm.port
   })
 }
@@ -74,7 +74,7 @@ resource "yandex_compute_instance" "zita_vm1" {
   folder_id          = data.yandex_resourcemanager_folder.folder.id
   name               = var.zitadel_vm.name
   hostname           = var.zitadel_vm.name
-  description        = local.zita_fqdn
+  description        = local.zitadel_fqdn
   platform_id        = "standard-v3"
   zone               = data.yandex_vpc_subnet.subnet1.zone
   service_account_id = yandex_iam_service_account.zita_vm_sa.id
@@ -99,7 +99,7 @@ resource "yandex_compute_instance" "zita_vm1" {
     security_group_ids = [yandex_vpc_security_group.vm_sg.id]
   }
 
-  # Build the CloudInit config
+  # Build CloudInit config
   metadata = {
     user-data = templatefile("${path.module}/templates/zitadel-vm-init.tpl", {
       ADMIN_NAME     = var.zitadel_vm.admin_user
@@ -111,10 +111,11 @@ resource "yandex_compute_instance" "zita_vm1" {
       cert_id        = yandex_cm_certificate.vm_le_cert.id
     })
   }
+
   # Copy provisioning script to VM
   provisioner "file" {
-    content     = local.zita_setup
-    destination = local.zita_setup_fn
+    content     = local.zitadel_setup
+    destination = local.zitadel_setup_fn
   }
 
   # Copy filed for build Docker container
@@ -131,8 +132,8 @@ resource "yandex_compute_instance" "zita_vm1" {
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x ~/zita-setup.sh",
-      "sudo ~/zita-setup.sh"
+      "chmod +x ~/zitadel-setup.sh",
+      "sudo ~/zitadel-setup.sh"
     ]
   }
 
@@ -143,7 +144,7 @@ resource "yandex_compute_instance" "zita_vm1" {
   depends_on = [yandex_mdb_postgresql_database.pg_db]
 }
 
-# Copy JWT Key from VM to Terraform node
+# Move JWT Key from VM to Terraform node
 resource "null_resource" "copy_jwt_key" {
   provisioner "local-exec" {
     command = <<-CMD
