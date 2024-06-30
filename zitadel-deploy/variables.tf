@@ -77,6 +77,10 @@ variable "zitadel_vm" {
       admin_key_file = string # Admin's SSH public key file
     }
   )
+  validation {
+    condition     = provider::local::direxists(pathexpand(var.zitadel_vm.jwt_path))
+    error_message = "The jwt key path must be exists!"
+  }
 }
 
 # ===============

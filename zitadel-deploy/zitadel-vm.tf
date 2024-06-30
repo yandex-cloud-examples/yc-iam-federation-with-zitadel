@@ -148,7 +148,7 @@ resource "yandex_compute_instance" "zita_vm1" {
 resource "null_resource" "copy_jwt_key" {
   provisioner "local-exec" {
     command = <<-CMD
-    scp ${var.zitadel_vm.admin_user}@${yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address}:${local.jwt_key_file} ${var.zitadel_vm.jwt_path}/${local.jwt_key_file}
+    scp ${var.zitadel_vm.admin_user}@${yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address}:${local.jwt_key_file} ${pathexpand(var.zitadel_vm.jwt_path)}/${local.jwt_key_file}
     ssh ${var.zitadel_vm.admin_user}@${yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address} rm ${local.jwt_key_file}
     CMD
   }

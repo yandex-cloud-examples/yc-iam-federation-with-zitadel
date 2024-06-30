@@ -11,6 +11,10 @@ terraform {
       source  = "hashicorp/null"
       version = "~> 3.2.2"
     }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5.1"
+    }
   }
 }
 
@@ -63,7 +67,7 @@ module "zitadel-deploy" {
     disk_size      = 80 # Gigabytes
     image_family   = "ubuntu-2204-lts"
     port           = "8443"
-    jwt_path       = "/home/user/.ssh" # Check path for exists!
+    jwt_path       = "~/.ssh"
     admin_user     = "admin"
     admin_key_file = "~/.ssh/id_ed25519.pub"
   }
