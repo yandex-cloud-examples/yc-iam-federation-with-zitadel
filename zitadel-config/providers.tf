@@ -24,5 +24,5 @@ provider "zitadel" {
   domain           = local.zita_fqdn
   port             = local.zita_port
   insecure         = "false"
-  jwt_profile_file = var.system.jwt_key
+  jwt_profile_file = pathexpand(var.system.jwt_key)
 }

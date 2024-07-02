@@ -8,6 +8,7 @@ import json
 import time
 import requests
 import sys
+import os
 
 if len(sys.argv) == 3:
     sa_file_name = sys.argv[1]
@@ -18,7 +19,7 @@ else:
     exit(1)
 
 # Load json file with Zitadel SA key
-with open(sa_file_name) as fd:
+with open(os.path.expanduser(sa_file_name)) as fd:
     sa = json.load(fd)
 
 signing_key = jwk_from_pem(bytes(sa["key"], 'utf-8'))

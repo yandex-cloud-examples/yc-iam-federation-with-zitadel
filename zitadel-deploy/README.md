@@ -74,9 +74,9 @@ Terraform модуль `zitadel-deploy` выполняет следующие д
 | `zitadel_vm.disk_size` | Размер диска для Zitadel ВМ. Предполагается использование [network-ssd](https://yandex.cloud/ru/docs/compute/concepts/disk#disks-types) диска для развёртывания ВМ (в гигабайтах).|
 | `zitadel_vm.image_family` | Имя [базового образа](https://yandex.cloud/ru/docs/compute/concepts/image) для развёртывания Zitadel ВМ. Например, `ubuntu-2204-lts`. |
 | `zitadel_vm.port` | Номер порта на котором будет отвечать Zitadel после развёртывания. Например, `8443`. |
-| `zitadel_vm.jwt_path` | Путь в системе где запускается Terraform развёртывание по которому Zitadel в процессе своей инициализации создаст ключ [сервисной учётной записи](https://zitadel.com/docs/concepts/structure/users#service-users) в виде файла в формате json. Имя файла с ключём будет иметь вид: `<zitadel_vm.name>-sa.json`, например, `zitadel-vm-sa.json`. Этот файл будет использоваться в дальнейшем для создания всех необходимых объектов в Zitadel. |
+| `zitadel_vm.jwt_path` | Путь в системе где запускается Terraform развёртывание по которому Zitadel в процессе своей инициализации создаст ключ [сервисной учётной записи](https://zitadel.com/docs/concepts/structure/users#service-users) в виде файла в формате json. Имя файла с ключом будет иметь вид: `<zitadel_vm.name>-sa.json`, например, `zitadel-vm-sa.json`. Этот файл будет использоваться в дальнейшем для создания всех необходимых объектов в Zitadel. |
 | `zitadel_vm.admin_user` | Имя администратора Zitadel ВМ. Используется только при подключении к ВМ по протоколу SSH.|
-| `zitadel_vm.admin_key_file` | Путь к файлу с приватным SSH-ключём администратора Zitadel ВМ. Используется только при подключении к ВМ по протоколу SSH, например, `~/.ssh/id_ed25519`. |
+| `zitadel_vm.admin_key_file` | Путь к файлу с приватным SSH-ключом администратора Zitadel ВМ. Используется только при подключении к ВМ по протоколу SSH, например, `~/.ssh/id_ed25519`. |
 
 
 ## Выходные параметры модуля <a id="zd-outputs"/></a>
@@ -86,4 +86,4 @@ Terraform модуль `zitadel-deploy` выполняет следующие д
 | Параметр (переменная) | Описание |
 | - | -
 | `zitadel_base_url` | URL с указанием FQDN развёрнутого IdP Zitadel, например, `https://zitadel-vm.my-domain.net:8443`.
-| `jwt_key_full_path` | Полный путь к файлу с ключём сервисной учётной записи, например, `~/.ssh/zitadel-vm-sa.json`.
+| `jwt_key_full_path` | Полный путь к файлу с ключом сервисной учётной записи, например, `~/.ssh/zitadel-vm-sa.json`.
