@@ -103,7 +103,7 @@ resource "yandex_compute_instance" "zita_vm1" {
   metadata = {
     user-data = templatefile("${path.module}/templates/zitadel-vm-init.tpl", {
       ADMIN_NAME     = var.zitadel_vm.admin_user
-      ADMIN_SSH_KEY  = file(var.zitadel_vm.admin_key_file)
+      ADMIN_SSH_KEY  = file("${var.zitadel_vm.admin_key_file}.pub")
       zita_masterkey = yandex_lockbox_secret.zita_masterkey.id
       pg_host        = yandex_lockbox_secret.pg_host.id
       pg_db          = var.pg_cluster.db_name
@@ -125,9 +125,11 @@ resource "yandex_compute_instance" "zita_vm1" {
   }
 
   connection {
-    type = "ssh"
-    user = var.zitadel_vm.admin_user
-    host = yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address
+    type        = "ssh"
+    user        = var.zitadel_vm.admin_user
+    host        = yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address
+    agent       = false
+    private_key = file("${var.zitadel_vm.admin_key_file}")
   }
 
   provisioner "remote-exec" {

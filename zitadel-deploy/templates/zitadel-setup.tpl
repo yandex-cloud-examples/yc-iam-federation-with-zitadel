@@ -9,14 +9,30 @@ chmod u+x /root/disable-ipv6.sh
 echo "@reboot . /root/disable-ipv6.sh" >> /var/spool/cron/crontabs/root
 /root/disable-ipv6.sh
 
-# Wait for Docker daemon is running
-while ! docker stats --no-stream; do sleep 5; done
+echo "Waiting when Docker daemon will be ready"
+while ! docker stats --no-stream 2>/dev/null; do sleep 5; done
 
 # Get dependencies
 echo "{ \"registry-mirrors\": [\"https://${CR_NAME}\"] }" > /etc/docker/daemon.json
 systemctl restart docker
 docker pull ${CR_BASE_IMAGE}
 
+echo "Waiting when LE certificate will be ISSUED"
+export YC_TOKEN=$(curl -sf -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token | jq -r .access_token)
+export CERT_ID=$(curl -sf -H Metadata-Flavor:Google 169.254.169.254/latest/user-data | grep le_cert_id | awk '{print $2}')
+
+while true
+do
+  STATUS=$(curl -sf -H "Authorization: Bearer $YC_TOKEN" https://certificate-manager.api.cloud.yandex.net/certificate-manager/v1/certificates/$CERT_ID | jq -r .status)
+  if [ "$STATUS" = "ISSUED" ]; then
+    break
+  else
+    echo $STATUS
+    sleep 30s
+  fi
+done
+
+# Zitadel Initialization
 ZITA_IMAGE=${CNTR_NAME}
 chmod +x files/docker-entrypoint.sh
 

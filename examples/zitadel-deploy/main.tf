@@ -69,7 +69,7 @@ module "zitadel-deploy" {
     port           = "8443"
     jwt_path       = "~/.ssh"
     admin_user     = "admin"
-    admin_key_file = "~/.ssh/id_ed25519.pub"
+    admin_key_file = "~/.ssh/id_ed25519" # SSH Private key path
   }
 }
 
