@@ -16,6 +16,10 @@ terraform {
       source  = "devops-rob/terracurl"
       version = "~> 1.2.1"
     }
+    gitlab = {
+      source  = "gitlabhq/gitlab"
+      version = "~> 17.1.0"
+    }
   }
   required_version = ">= 1.8.0"
 }

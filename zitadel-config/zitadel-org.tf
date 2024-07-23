@@ -9,7 +9,7 @@ resource "zitadel_org" "org" {
 }
 
 locals {
-  init_pass = "VxP67@t4d-l3mI3"
+  init_pass = "VxP67@t4d-l3mI3%d285cM"
 }
 
 // Manager account for users management

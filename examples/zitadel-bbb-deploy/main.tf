@@ -9,7 +9,7 @@ module "zitadel-deploy" {
     cloud_id      = var.YC_CLOUD_ID
     folder_name   = "infra"
     zone_id       = "ru-central1-b"
-    dns_zone_name = "mydomain-net"
+    dns_zone_name = "yclabs-net" # "mydomain-net"
     network       = "infra-net"
     subnet1       = "infra-subnet-b"
   }
@@ -41,7 +41,7 @@ module "zitadel-deploy" {
 
   # Zitadel VM attributes
   zitadel_vm = {
-    name           = "zitadel-vm"
+    name           = "zita1" # "zitadel-vm"
     vcpu           = 2
     ram            = 8  # Gigabytes
     disk_size      = 80 # Gigabytes
@@ -59,4 +59,34 @@ output "zitadel_base_url" {
 
 output "jwt_key_full_path" {
   value = module.zitadel-deploy.jwt_key_full_path
+}
+
+# ======================
+# Call bbb-deploy module
+# ======================
+module "bbb-deploy" {
+  source = "../../bbb-deploy"
+
+  # BBB attributes
+  bbb_vm = {
+    name      = "bbb1"
+    pub_name  = "b"
+    version   = "2.7.4"
+    vcpu      = 12  # 24
+    ram       = 24  # 32
+    disk_size = 300 # 500
+    image     = "ubuntu-2004-lts"
+    port      = "443"
+    cert_priv = "bbb-cert-priv-key.pem"
+    cert_pub  = "bbb-cert-pub-chain.pem"
+
+    # Import from the module zitadel-deploy
+    infra_zone_id       = "${module.zitadel-deploy.infra_zone_id}"
+    infra_folder_id     = "${module.zitadel-deploy.infra_folder_id}"
+    infra_dns_zone_name = "${module.zitadel-deploy.infra_dns_zone_name}"
+    admin_user          = "${module.zitadel-deploy.admin_user}"
+    admin_key_file      = "${module.zitadel-deploy.admin_key_file}"
+    infra_net_id        = "${module.zitadel-deploy.infra_net_id}"
+    infra_subnet1_id    = "${module.zitadel-deploy.infra_subnet1_id}"
+  }
 }

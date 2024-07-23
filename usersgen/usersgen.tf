@@ -3,7 +3,7 @@
 # =======================
 
 locals {
-  users_src = var.zitadel_users
+  users_src = var.users_list
   users_out = "../../zitadel-config/users.tf"
 
   users_data = yamldecode(file(local.users_src))
@@ -11,7 +11,7 @@ locals {
 
   users_tf_data = flatten([
     for user in local.users_list : {
-      user_tf_code = templatefile("${path.module}/user.tpl", {
+      user_tf_code = templatefile("${path.module}/templates/${var.template_file}", {
         USER_UNAME = user
         USER_FNAME = local.users_data[user].fname
         USER_LNAME = local.users_data[user].lname

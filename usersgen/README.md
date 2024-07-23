@@ -4,19 +4,33 @@
 ## Оглавление
 * [Описание модуля](#ug-overview)
 * [Входные параметры модуля](#ug-inputs)
+  * [Шаблоны пользовательских ресурсов](#user-template)
 * [Выходные параметры модуля](#ug-outputs)
 * [Управление пользователями](#ug-operations)
 
 
 ## Описание модуля <a id="ug-overview"/></a>
 
-Модуль [usersgen](../usersgen/) является вспомогательным для модуля [zitadel-config](../zitadel-config/README.md) из которого и вызывается. С помощью данного модуля осуществляется управление обычными пользователями *(не менеджерами)* в организации Zitadel.
+Модуль [usersgen](../usersgen/) является вспомогательным для модуля [zitadel-config](../zitadel-config/README.md) из которого вызывается.
+
+С помощью данного модуля осуществляется управление обычными пользователями *(не менеджерами)* в организации Zitadel.
 
 ## Входные параметры модуля <a id="ug-inputs"/></a>
 
 | Параметр (переменная) | Описание |
 | - | -
 | `zitadel_users` | Полный путь к YAML-файлу с описанием пользователей. Например, может быть определён так - `"${abspath(path.module)}/users.yml"`, что означает, взять из папки где запускается модуль файл `users.yml`. Формат описания пользователей см. в разделе ["Управление пользователями"](#ug-operations). |
+| `templates_file` | Имя файла [с шаблоном](./templates/) пользовательских ресурсов, которые будут создаваться. В каталоге [templates](./templates/) приведены несколько примеров для разных сценариев. При необходимости в этом же каталоге можно создавать другие шаблоны. |
+
+### Шаблоны пользовательских ресурсов <a id="user-template"/></a>
+
+| Имя файла с шаблоном в каталоге templates | Описание шаблона |
+| - | -
+| `user.tpl` | Создаёт пользователя в Zitadel и добавляет его в [облачную организацию](https://yandex.cloud/ru/docs/organization/) Yandex Cloud. |
+| `user-cloud-folder.tpl` | Дополнительно к шаблону `user.tpl` создаёт в Yandex Cloud для каждого пользователя [облако](https://yandex.cloud/ru/docs/resource-manager/concepts/resources-hierarchy#cloud) и [каталог](https://yandex.cloud/ru/docs/resource-manager/concepts/resources-hierarchy#folder), а также [выдаёт пользователю доступ](https://yandex.cloud/ru/docs/resource-manager/security/#resources) к этим объектам. |
+| `user-cloud-folder-vpc-gw-rt.tpl` | Дополнительно к шаблону `user-cloud-folder.tpl` создаёт в пользовательском каталоге [сеть](https://yandex.cloud/ru/docs/vpc/concepts/network#network), [подсети](https://yandex.cloud/ru/docs/vpc/concepts/network#subnet), [NAT-шлюз](https://yandex.cloud/ru/docs/vpc/concepts/gateways) и [таблицу маршрутизации](https://yandex.cloud/ru/docs/vpc/concepts/static-routes) для всех подсетей, которая обеспечивает выход в Интернет для подключенных ресурсов. |
+| `user-gitlab.tpl` | Дополнительно к шаблону `user.tpl` создаёт в Gitlab пользователя и репозиторий (project) для него.
+| `user-gitlab-cloud-folder.tpl` | Дополнительно к шаблону `user-cloud-folder.tpl` создаёт в Gitlab пользователя и репозиторий (project) для него.
 
 
 ## Выходные параметры модуля <a id="ug-outputs"/></a>

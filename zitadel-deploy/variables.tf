@@ -94,3 +94,31 @@ output "zitadel_base_url" {
 output "jwt_key_full_path" {
   value = "${var.zitadel_vm.jwt_path}/${local.jwt_key_file}"
 }
+
+output "infra_folder_id" {
+  value = data.yandex_resourcemanager_folder.folder.id
+}
+
+output "infra_dns_zone_name" {
+  value = var.yc_infra.dns_zone_name
+}
+
+output "admin_user" {
+  value = var.zitadel_vm.admin_user
+}
+
+output "admin_key_file" {
+  value = var.zitadel_vm.admin_key_file
+}
+
+output "infra_zone_id" {
+  value = var.yc_infra.zone_id
+}
+
+output "infra_net_id" {
+  value = data.yandex_vpc_subnet.subnet1.network_id
+}
+
+output "infra_subnet1_id" {
+  value = data.yandex_vpc_subnet.subnet1.id
+}

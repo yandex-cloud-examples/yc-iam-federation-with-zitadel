@@ -7,14 +7,19 @@
 * [Архитектура решения](#arch)
     * [Структура контейнера Zitadel](#container)
     * [Логическая модель Zitadel](#zita-logic)
-* [Развёртывание решения](#deployment)
+* [Базовое развёртывание решения](#deploy-base)
     * Модуль [zitadel-deploy](./zitadel-deploy/README.md)
     * Модуль [zitadel-config](./zitadel-config/README.md) 
     * Модуль [usersgen](./usersgen/README.md)
 * [Внешние зависимости](#ext-dep)
 * [Порядок развёртывание решения](#deploy)
 * [Результаты резвёртывания](#results)
+* [Расширенные варианты развёртывания решения](#deploy-ext)
+    * [Интеграция Zitadel с Yandex Managed Service for Gitlab](#deploy-gl)
+    * [Интеграции Zitadel с решением Big Blue Button](#deploy-bbb)
+    * [Интеграции Zitadel с Yandex Managed Service for Gitlab и решением Big Blue Button](#deploy-gl-bbb)
 * [Удаление развёртывания и освобождение ресурсов](#uninstall)
+* [*Хранение Terraform State в Yandex Object Storage (опционально)*](./s3-init/README.md)
 
 
 ## Описание решения <a id="overview"/></a>
@@ -45,10 +50,10 @@
 
 
 ## Архитектура решения <a id="arch"/></a>
-Обобщенная архитектура решения показана на рисунке ниже.
+Обобщенная архитектура базового варианта решения показана на рисунке ниже.
 
 <p align="left">
-    <img src="./zitadel-solution.svg" alt="Solution Architecture" width="800"/>
+    <img src="./zitadel-deploy/diagrams/zitadel-solution.svg" alt="Zitadel Solution Architecture" width="800"/>
 </p>
 
 Ниже дано краткое описание наиболее значимых элементов решения:
@@ -65,7 +70,6 @@
 
 * Сервис [Certificate Manager](https://yandex.cloud/ru/docs/certificate-manager/)(CM) будет использоваться для получения сертификата от сервиса `Let's Encrypt` и взаимодействия в процессе получения сертификата с сервисом Cloud DNS. Контейнер `IdP Zitadel` будет обращаться при старте к CM для получения актуальной версии LE-сертификата.
 
-
 ### Структура контейнера Zitadel <a id="container"/></a>
 
 Docker-контейнер с `Zitadel` собирается в процессе развёртывани виртуальной машины. 
@@ -73,7 +77,7 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 Структура контейнера (состав компонентов) показана на схеме ниже.
 
 <p align="left">
-    <img src="./zitadel-container.svg" alt="Zitadel container structure" width="500"/>
+    <img src="./zitadel-deploy/diagrams/zitadel-container.svg" alt="Zitadel container structure" width="500"/>
 </p>
 
 
@@ -82,7 +86,7 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 Логическая структура объектов в данном развертывании и их связи между собой показаны на схеме ниже.
 
 <p align="left">
-    <img src="./zitadel-logic.svg" alt="Zitadel Logic structure" width="800"/>
+    <img src="./zitadel-config/diagrams/zitadel-logic.svg" alt="Zitadel Logic structure" width="800"/>
 </p>
 
 Основные объекты Zitadel, показанные на схеме:
@@ -130,14 +134,13 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 После этого пользователь сможет аутентифицироваться в Yandex Cloud. Состав облачных ресурсов и права доступа к ним будут зависеть от [набора ролей](https://yandex.cloud/ru/docs/iam/roles-reference), которые [должны быть выданы](https://yandex.cloud/ru/docs/iam/operations/roles/grant) администратором его учетной записи в облачной организации.
 
 
-## Развёртывание решения <a id="deployment"/></a>
+## Базовое развёртывание решения <a id="deploy-base"/></a>
 
 Данное решение реализовано в виде набора `Terraform` модулей для упрощения процедуры развёртывания и его дальнейшей эксплуатации:
 
 * Модуль [zitadel-deploy](./zitadel-deploy/README.md)
 * Модуль [zitadel-config](./zitadel-config/README.md) 
 * Модуль [usersgen](./usersgen/README.md)
-
 
 ### Внешние зависимости  <a id="ext-dep"/></a>
 Решение должно развёртываться в подготовленной инфраструктуре Yandex Cloud.
@@ -156,67 +159,77 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 ## Порядок развёртывания решения <a id="deploy"/></a>
 Развёртывание решения предполагается под управлением ОС `Linux` или `MacOS`.
 
-Развёртывание решения под управлением ОС `Windows` не тестировалось.
+Развёртывание решения под управлением ОС `Windows` и [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl) не тестировалось.
 
-0. Перед началом развертывания необходимо убедиться, что все необходимые инструменты установлены и настроены:
+1. Перед началом развертывания необходимо убедиться, что все необходимые инструменты установлены и настроены:
 * `yc CLI` - [установлен](https://yandex.cloud/ru/docs/cli/operations/install-cli) и [настроен](https://yandex.cloud/ru/docs/cli/operations/profile/profile-create#create)
 * `Terraform` - [установлен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform) и [настроен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#configure-provider)
 * `Python3`, а также модули [requests](https://pypi.org/project/requests) и [jwt](https://pypi.org/project/jwt) установлены.
 
-1. Загрузить решение из репозитория на [github.com](https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel):
+2. Загрузить решение из репозитория на [github.com](https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel):
     ```bash
     git clone https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel.git
     ```
 
-2. Перейти в папку с примером развёртывания модуля [zitadel-deploy](./examples/zitadel-deploy/):
+3. Выбрать нужный вариант развертывания (deploy) из следующих:
+* [zitadel-deploy](./examples/zitadel-deploy/) - базовое развёртывание Zitadel.
+* [zitadel-gitlab-deploy](./examples/zitadel-gitlab-deploy/) - расширенный вариант разввертывания Zitadel. Интеграция с [Yandex Managed Service for Gitlab](https://yandex.cloud/ru/docs/managed-gitlab/) (Gitlab).
+* [zitadel-bbb-deploy](./examples/zitadel-bbb-deploy/) - расширенный вариант разввертывания Zitadel. Интеграция с ПО [Big Blue Button](https://docs.bigbluebutton.org/) (BBB).
+* [zitadel-bbb-gitlab-deploy](./examples/zitadel-bbb-gitlab-deploy/) - расширенный вариант разввертывания Zitadel. Комбинированная интеграция с `Gitlab` и `BBB`. 
+
+    Подробнее о расширенных вариантах развёртывания можно узнать [в отдельном разделе](#deploy-ext) этого документа.
+
+4.  Перейти в папку с примером выбранного варианта развёртывания, например, [zitadel-deploy](./examples/zitadel-deploy/):
     ```bash
     cd yc-iam-federation-with-zitadel/examples/zitadel-deploy
     ```
 
-3. `Важно!` Убедиться, что все [внешние зависимости](#ext-dep) уже созданы!
+5. `Важно!` Убедиться, что все [внешние зависимости](#ext-dep) уже созданы!
 
-4. Проверить значения переменных в файле [main.tf](./examples/zitadel-deploy/main.tf) и скорректировать их. 
+6. Проверить значения переменных в файле [main.tf](./examples/zitadel-deploy/main.tf) и скорректировать их. 
 
-5. Подготовить среду для развёртывания:
+7. Подготовить среду для развёртывания:
     ```bash
     terraform init
     source env-setup.sh
     ```
 
-6. Выполнить развёртывание `zitadel-deploy`:
+8. Выполнить развёртывание `zitadel-deploy`:
     ```bash
     terraform apply
     ```
     Обработка запроса на выдачу сертификата в сервисе [Let's Encrypt](https://letsencrypt.org/) может выполняться `до 30 минут`!
 
-7. Проверить состояние выданного сертификата Let's Encrypt:
+9. Проверить состояние выданного сертификата Let's Encrypt:
     ```bash
     yc cm certificate list
     ```
 
-8. Перейти в папку с примером развёртывания модуля [zitadel-config](./examples/zitadel-config/):
+10. Перейти в папку с примером развёртывания модуля [zitadel-config](./examples/zitadel-config/):
     ```bash
     cd ../zitadel-config
     ```
 
-9. Проверить значения переменных в файле [main.tf](./examples/zitadel-config/main.tf) и скорректировать их.
+11. Проверить значения переменных в файле [main.tf](./examples/zitadel-config/main.tf) и скорректировать их.
+   
+   `Важно!` Убедиться, что в переменной `template_file` выбран [шаблон](./usersgen/README.md#user-template), соответствующий выбранному варианту развёртывания решения!
 
 
-10. Скорректировать информацию о пользователях в файле [users.yml](./examples/zitadel-config/users.yml)
+12. Скорректировать информацию о пользователях в файле [users.yml](./examples/zitadel-config/users.yml)
 
 
-11. Подготовить среду для развёртывания:
+13. Подготовить среду для развёртывания:
     ```bash
     terraform init
     source env-setup.sh
     ```
 
-12. Выполнить развёртывание `zitadel-config` и генерацию файла с пользовательcкими ресурсами - `users.tf`:
+14. Выполнить развёртывание `zitadel-config` и генерацию файла с пользовательcкими ресурсами - `users.tf`:
     ```bash
     terraform apply
     ```
 
-13. Выполнить развёртывание пользовательских ресурсов из файла `users.tf`:
+15. Выполнить развёртывание пользовательских ресурсов из файла `users.tf`:
     ```bash
     terraform apply
     ```
@@ -224,14 +237,48 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 
 ## Результаты развёртывания <a id="results"/></a>
 
-В результате развёртывания решения в Yandex Cloud будут созданы следующие объекты:
+В результате базового развёртывания решения в Yandex Cloud будут созданы следующие объекты:
 * [Федерация удостоверений](https://yandex.cloud/ru/docs/organization/concepts/add-federation) в указанной `организации`
 * `Сертификат` [Let's Encrypt](https://letsencrypt.org/) для `IdP Zitadel` в сервисе [Certificate Manager](https://yandex.cloud/ru/docs/certificate-manager)
 * `IdP Zitadel` успешно взаимодействует с федерацией удостоверений со стороны Yandex Cloud
 * `Запись в Yandex Cloud DNS` с публичным IP-адресом ВМ `zitadel-vm`
 * `Учётные записи` пользователей в IdP Zitadel синхронизированы через федерацию в организацию Yandex Cloud
 
-После развёртывания решения останется выдать необходимые [роли](https://yandex.cloud/ru/docs/iam/roles-reference) на нужные облачные ресурсы для созданных в организации учётных записей пользователей.
+После базового развёртывания решения останется выдать необходимые [роли](https://yandex.cloud/ru/docs/iam/roles-reference) на нужные облачные ресурсы для созданных в организации учётных записей пользователей.
+
+В результате расширенных вариантов развёртывания будут созданы дополнительные объекты, соответствующие выбранному варианту.
+
+## Расширенные варианты развёртывания решения <a id="deploy-ext"/></a>
+
+Решение может быть развёрнуто не только в базовом варианте, но и в расширенных вариантах с интеграцией дополнительных компонентов, таких как:
+* Система управления разработкой [Yandex Managed Service for GitLab](https://yandex.cloud/ru/docs/managed-gitlab/) (Gitlab)
+* Система видеоконференций [Big Blue Button](https://docs.bigbluebutton.org/) (BBB)
+* Интеграция с компонентами Gitlab и BBB одновременно
+
+Расширенные варианты развёртывания отличаются от базового только в части `zitadel-deploy`, остальные части развертывания - `zitadel-config` и `usersgen` работают для всех вариантов развёртывания одинаково.
+
+### Интеграция Zitadel с Yandex Managed Service for Gitlab <a id="deploy-gl"/></a>
+<p align="left">
+    <img src="./gitlab-deploy/diagrams/zitadel-gitlab.svg" alt="Gitlab integration diagram" width="800"/>
+</p>
+
+Пример развёртывания представлен в каталоге [zitadel-gitlab-deploy](./examples/zitadel-gitlab-deploy/).
+
+
+### Интеграция Zitadel с решением Big Blue Button <a id="deploy-bbb"/></a>
+<p align="left">
+    <img src="./bbb-deploy/diagrams/zitadel-bbb.svg" alt="BBB integration diagram" width="800"/>
+</p>
+
+Пример развёртывания представлен в каталоге [zitadel-bbb-deploy](./examples/zitadel-bbb-deploy/).
+
+
+### Интеграции Zitadel с Yandex Managed Service for Gitlab и решением Big Blue Button<a id="deploy-gl-bbb"/></a>
+<p align="left">
+    <img src="./zitadel-deploy/diagrams/zitadel-bbb-gitlab.svg" alt="Gitlab integration diagram" width="800"/>
+</p>
+
+Пример развёртывания представлен в каталоге [zitadel-bbb-gitlab-deploy](./examples/zitadel-bbb-gitlab-deploy/).
 
 
 ## Удаление развёртывания и освобождение ресурсов <a id="uninstall"/></a>
@@ -252,6 +299,7 @@ Docker-контейнер с `Zitadel` собирается в процессе 
     ```bash
     terraform destroy
     ```
+    Не обращать внимания на ошибку `Default Organisation must not be deleted`.
 
 4. Перейти в папку с примером развёртывания модуля [zitadel-deploy](./examples/zitadel-deploy/):
     ```bash
@@ -274,4 +322,3 @@ Docker-контейнер с `Zitadel` собирается в процессе 
    ```bash
    rm -rf yc-iam-federation-with-zitadel
    ```
-

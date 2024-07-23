@@ -48,6 +48,36 @@ variable "zitadel_org" {
   )
 }
 
+# ==================================================
+# Zitadel SMTP config. Optional. Disabled by default
+# ==================================================
+variable "zitadel_smtp" {
+  description = "Zitadel Instance SMTP configuration"
+  type = object(
+    {
+      enabled        = bool # SMTP enabled / disabled
+      sender_address = string
+      reply_address  = string
+      sender_name    = string
+      tls            = bool
+      host           = string
+      user           = string
+      password       = string
+    }
+  )
+
+  default = {
+    enabled        = false # disabled
+    sender_address = null
+    reply_address  = null
+    sender_name    = null
+    tls            = false
+    host           = null
+    user           = null
+    password       = null
+  }
+}
+
 # ===============
 # Zitadel Outputs
 # ===============

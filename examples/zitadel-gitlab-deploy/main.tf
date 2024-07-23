@@ -9,7 +9,7 @@ module "zitadel-deploy" {
     cloud_id      = var.YC_CLOUD_ID
     folder_name   = "infra"
     zone_id       = "ru-central1-b"
-    dns_zone_name = "mydomain-net"
+    dns_zone_name = "yclabs-net" # "mydomain-net"
     network       = "infra-net"
     subnet1       = "infra-subnet-b"
   }
@@ -41,7 +41,7 @@ module "zitadel-deploy" {
 
   # Zitadel VM attributes
   zitadel_vm = {
-    name           = "zitadel-vm"
+    name           = "zita1" # "zitadel-vm"
     vcpu           = 2
     ram            = 8  # Gigabytes
     disk_size      = 80 # Gigabytes
@@ -59,4 +59,22 @@ output "zitadel_base_url" {
 
 output "jwt_key_full_path" {
   value = module.zitadel-deploy.jwt_key_full_path
+}
+
+# =========================
+# Call gitlab-deploy module
+# =========================
+
+# Create Gitlab instance before call:
+# https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel/gitlab-deploy/gitlab-setup.md
+
+module "gitlab-deploy" {
+  source = "../../gitlab-deploy"
+
+  # Gitlab attributes
+  gitlab = {
+    domain     = "mycorp" # .gitlab.yandexcloud.net
+    group_name = "mygroup5"
+    token_file = "~/.ssh/gitlab-pat.txt"
+  }
 }

@@ -1,36 +1,25 @@
-# ==================================
-# Terraform & Provider Configuration
-# ==================================
-
-terraform {
-  required_providers {
-    yandex = {
-      source  = "yandex-cloud/yandex"
-      version = "~> 0.122.0"
-    }
-    zitadel = {
-      source  = "zitadel/zitadel"
-      version = "~> 1.3.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5.1"
-    }
-    terracurl = {
-      source  = "devops-rob/terracurl"
-      version = "~> 1.2.1"
-    }
-  }
-}
-
 # ====================
 # Call usersgen module
 # ====================
 
 module "usersgen" {
-  source = "../../usersgen"
+  source     = "../../usersgen"
+  users_list = "${abspath(path.module)}/users.yml"
 
-  zitadel_users = "${abspath(path.module)}/users.yml"
+  # User only
+  template_file = "user.tpl"
+
+  # User + Cloud + Folder
+  # template_file = "user-cloud-folder.tpl"
+
+  # User + Cloud + Folder + VPC + Egress gateway + Route table
+  # template_file = "user-cloud-folder-vpc-gw-rt.tpl"
+
+  # User + Gitlab
+  # template_file = "user-gitlab.tpl"
+
+  # User + Gitlab + Cloud + Folder
+  # template_file = "user-gitlab-cloud-folder.tpl"
 }
 
 # ===========================
@@ -63,6 +52,18 @@ module "zitadel-config" {
     yc_org_id     = "bpfljqv8z325tbjhusm"
     yc_fed_name   = "zitadel-federation"
     yc_fed_descr  = "YC and Zitadel integration"
+  }
+
+  # STMP is disabled by default, configure enabled = true if required
+  zitadel_smtp = {
+    enabled        = false
+    sender_address = "info@my-domain.net"
+    reply_address  = "noreply@my-domain.net"
+    sender_name    = "no-reply"
+    tls            = true
+    host           = "smtp.my-domain.net:25"
+    user           = "smtp-sender"
+    password       = "sm27ComplEx38passWord"
   }
 }
 
