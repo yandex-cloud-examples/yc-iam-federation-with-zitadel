@@ -69,16 +69,16 @@ module "bbb-deploy" {
 
   # BBB attributes
   bbb_vm = {
-    name      = "bbb1"
-    pub_name  = "b"
-    version   = "2.7.4"
-    vcpu      = 12  # 24
-    ram       = 24  # 32
-    disk_size = 300 # 500
-    image     = "ubuntu-2004-lts"
-    port      = "443"
-    cert_priv = "bbb-cert-priv-key.pem"
-    cert_pub  = "bbb-cert-pub-chain.pem"
+    name         = "bbb1"
+    pub_name     = "b"
+    version      = "2.7.4"
+    vcpu         = 12  # 24
+    ram          = 24  # 32
+    disk_size    = 300 # 500
+    image_family = "ubuntu-2004-lts"
+    port         = "443"
+    cert_priv    = "bbb-cert-priv-key.pem"
+    cert_pub     = "bbb-cert-pub-chain.pem"
 
     # Import from the module zitadel-deploy
     infra_zone_id       = "${module.zitadel-deploy.infra_zone_id}"
