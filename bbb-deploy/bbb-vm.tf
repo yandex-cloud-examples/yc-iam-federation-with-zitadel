@@ -22,7 +22,7 @@ resource "yandex_compute_instance" "bbb_vm1" {
   name        = var.bbb_vm.name
   hostname    = var.bbb_vm.name
   platform_id = "standard-v3"
-  zone        = var.bbb_vm.infra_subnet1_id
+  zone        = var.bbb_vm.infra_zone_id
 
   resources {
     cores  = var.bbb_vm.vcpu
