@@ -61,7 +61,7 @@ resource "terracurl_request" "upload_cert_to_yc_federation" {
 }
 
 locals {
-  yc_fed_url = "https://console.cloud.yandex.ru/federations/${yandex_organizationmanager_saml_federation.yc_federation.id}"
+  yc_fed_url = "https://auth.yandex.cloud/federations/${yandex_organizationmanager_saml_federation.yc_federation.id}"
 }
 
 // Zitadel SAML Application for YC Integration
