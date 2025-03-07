@@ -30,9 +30,9 @@ module "zitadel-deploy" {
   zitadel_cntr = {
     name            = "zitadel"
     cr_name         = "mirror.gcr.io"
-    cr_base_image   = "ubuntu:22.04"
+    cr_base_image   = "ubuntu:24.04"
     zitadel_source  = "https://github.com/zitadel/zitadel/releases/download"
-    zitadel_version = "2.55.0"
+    zitadel_version = "2.70.2"
     zitadel_file    = "zitadel-linux-amd64.tar.gz"
     yq_source       = "https://github.com/mikefarah/yq/releases/download"
     yq_version      = "4.44.2"
@@ -45,7 +45,7 @@ module "zitadel-deploy" {
     vcpu           = 2
     ram            = 8  # Gigabytes
     disk_size      = 80 # Gigabytes
-    image_family   = "ubuntu-2204-lts"
+    image_family   = "ubuntu-2404-lts-oslogin"
     port           = "8443"
     jwt_path       = "~/.ssh"
     admin_user     = "admin"
