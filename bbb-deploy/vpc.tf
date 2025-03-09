@@ -5,6 +5,7 @@
 # Reserve Public IP for BBB VM
 resource "yandex_vpc_address" "bbb_vm" {
   name = var.bbb_vm.name
+  folder_id  = var.bbb_vm.infra_folder_id
 
   external_ipv4_address {
     zone_id = var.bbb_vm.infra_zone_id
