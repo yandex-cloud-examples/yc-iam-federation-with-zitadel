@@ -52,8 +52,8 @@ resource "terraform_data" "bbb_config_deploy" {
 
   provisioner "remote-exec" {
     inline = [
-      "cat ${GL_CONFIG} >> /root/greenlight-v3/.env",
-      "docker-compose down && docker-compose up -d"
+      "sudo sh -c 'cat ${ADMIN_NAME}/${GL_CONFIG} >> /root/greenlight-v3/.env'",
+      "sudo sh -c 'cd /root/greenlight-v3/ && docker-compose down && docker-compose up -d'"
     ]
   }
 }
