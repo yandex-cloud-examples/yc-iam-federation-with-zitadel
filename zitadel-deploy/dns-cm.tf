@@ -10,7 +10,7 @@ data "yandex_dns_zone" "dns_zone" {
 # Create DNS record for the VM with created public ip address
 resource "yandex_dns_recordset" "vm_dns_rec" {
   zone_id = data.yandex_dns_zone.dns_zone.id
-  name    = var.zitadel_vm.name
+  name    = var.zitadel_vm.public_dns_name
   type    = "A"
   ttl     = 300
   data    = ["${yandex_vpc_address.vm_pub_ip.external_ipv4_address.0.address}"]
@@ -19,7 +19,7 @@ resource "yandex_dns_recordset" "vm_dns_rec" {
 # Create LE certificate request for VM
 resource "yandex_cm_certificate" "vm_le_cert" {
   folder_id   = data.yandex_resourcemanager_folder.folder.id
-  name        = var.zitadel_vm.name
+  name        = "zitadel"
   description = "LE certificate for the ${var.zitadel_vm.name} VM"
   domains     = ["${local.zitadel_fqdn}"]
   managed {

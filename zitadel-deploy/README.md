@@ -28,6 +28,7 @@ Terraform модуль `zitadel-deploy` выполняет следующие д
 
 | Параметр (переменная) | Описание |
 | - | -
+| `yc_infra.project` | Название развертывания, используется в именах БД и секретов. |
 | `yc_infra.cloud_id` | Идентификатор облака. |
 | `yc_infra.folder_name` | Имя каталога в облаке `yc_infra.cloud_id`. |
 | `yc_infra.zone_id` | Идентификатор [зоны доступности](https://yandex.cloud/ru/docs/overview/concepts/geo-scope), где будут развёрнуты Zitadel ВМ и [кластер PostgreSQL](https://yandex.cloud/ru/docs/managed-postgresql/). |
@@ -69,10 +70,11 @@ Terraform модуль `zitadel-deploy` выполняет следующие д
 | Параметр (переменная) | Описание |
 | - | -
 | `zitadel_vm.name` | Имя виртуальной машины Zitadel ВМ. |
+| `zitadel_vm.public_dns_name` | Имя под которым Zitadel ВМ будет публиковаться в DNS. |
 | `zitadel_vm.vcpu` | Количество ядер для Zitadel ВМ. |
 | `zitadel_vm.ram` | Количество оперативной памяти (RAM) для Zitadel ВМ (в гигабайтах). |
 | `zitadel_vm.disk_size` | Размер диска для Zitadel ВМ. Предполагается использование [network-ssd](https://yandex.cloud/ru/docs/compute/concepts/disk#disks-types) диска для развёртывания ВМ (в гигабайтах).|
-| `zitadel_vm.image_family` | Имя семейства [базового образа](https://yandex.cloud/ru/docs/compute/concepts/image) для развёртывания Zitadel ВМ. Например, `ubuntu-2204-lts`. |
+| `zitadel_vm.image_family` | Имя семейства [базового образа](https://yandex.cloud/ru/docs/compute/concepts/image) для развёртывания Zitadel ВМ. Например, `ubuntu-2404-lts`. |
 | `zitadel_vm.port` | Номер порта на котором будет отвечать Zitadel после развёртывания. Например, `8443`. |
 | `zitadel_vm.jwt_path` | Путь в системе где запускается Terraform развёртывание по которому Zitadel в процессе своей инициализации создаст ключ [сервисной учётной записи](https://zitadel.com/docs/concepts/structure/users#service-users) в виде файла в формате json. Имя файла с ключом будет иметь вид: `<zitadel_vm.name>-sa.json`, например, `zitadel-vm-sa.json`. Этот файл будет использоваться в дальнейшем для создания всех необходимых объектов в Zitadel. |
 | `zitadel_vm.admin_user` | Имя администратора Zitadel ВМ. Используется только при подключении к ВМ по протоколу SSH.|

@@ -164,7 +164,7 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 1. Перед началом развертывания необходимо убедиться, что все необходимые инструменты установлены и настроены:
 * `yc CLI` - [установлен](https://yandex.cloud/ru/docs/cli/operations/install-cli) и [настроен](https://yandex.cloud/ru/docs/cli/operations/profile/profile-create#create)
 * `Terraform` - [установлен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform) и [настроен](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#configure-provider)
-* `Python3`, а также модули [requests](https://pypi.org/project/requests) и [jwt](https://pypi.org/project/jwt) установлены.
+* `Python3`, а также модули [requests](https://pypi.org/project/requests) и [jwt](https://pypi.org/project/jwt) установлены (`pip3 install requests jwt`)
 
 2. Загрузить решение из репозитория на [github.com](https://github.com/yandex-cloud-examples/yc-iam-federation-with-zitadel):
     ```bash
@@ -212,24 +212,31 @@ Docker-контейнер с `Zitadel` собирается в процессе 
 
 11. Проверить значения переменных в файле [main.tf](./examples/zitadel-config/main.tf) и скорректировать их.
    
-   `Важно!` Убедиться, что в переменной `template_file` выбран [шаблон](./usersgen/README.md#user-template), соответствующий выбранному варианту развёртывания решения!
+    `Важно!` Убедиться, что в переменной `template_file` выбран [шаблон](./usersgen/README.md#user-template), соответствующий выбранному варианту развёртывания решения!
 
 
-12. Скорректировать информацию о пользователях в файле [users.yml](./examples/zitadel-config/users.yml)
+12. Скорректировать информацию о пользователях в файле [users.yml](./examples/zitadel-config/users.yml) или сгенерировать его с помощью [yamlgen.sh](./usersgen/yamlgen.sh).
 
 
-13. Подготовить среду для развёртывания:
+13. Задать значения переменным окружения `TF_VAR_ZITA_BASE_URL` и `TF_VAR_JWT_KEY` в файле [env-setup.sh](./examples/zitadel-config/env-setup.sh) в соответствии со значениями `outputs`, полученными при выполнении `zitadel-deploy`, например:
+
+    ```bash
+    export TF_VAR_ZITA_BASE_URL="https://zitadel.mydom.net:8443"
+    export TF_VAR_JWT_KEY="~/.ssh/zitadel-sa.json"
+    ```
+
+14. Подготовить среду для развёртывания:
     ```bash
     terraform init
     source env-setup.sh
     ```
 
-14. Выполнить развёртывание `zitadel-config` и генерацию файла с пользовательcкими ресурсами - `users.tf`:
+15. Выполнить развёртывание `zitadel-config` и генерацию файла с пользовательcкими ресурсами - `users.tf`:
     ```bash
     terraform apply
     ```
 
-15. Выполнить развёртывание пользовательских ресурсов из файла `users.tf`:
+16. Выполнить развёртывание пользовательских ресурсов из файла `users.tf`:
     ```bash
     terraform apply
     ```

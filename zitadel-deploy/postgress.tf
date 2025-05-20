@@ -1,10 +1,11 @@
 # ==========================
-# YC MDB Postgress Resources
+# YC MDB Postgres Resources
 # ==========================
 
-resource "yandex_mdb_postgresql_cluster" "pg_cluster" {
+resource "yandex_mdb_postgresql_cluster_v2" "pg_cluster" {
   folder_id   = data.yandex_resourcemanager_folder.folder.id
   name        = var.pg_cluster.name
+  description = "YCLabs PG Cluster"
   environment = "PRODUCTION"
   network_id  = data.yandex_vpc_network.net.id
 
@@ -17,20 +18,22 @@ resource "yandex_mdb_postgresql_cluster" "pg_cluster" {
     }
   }
 
-  host {
-    zone      = var.yc_infra.zone_id
-    subnet_id = data.yandex_vpc_subnet.subnet1.id
+  hosts = {
+    "node-d" = {
+      zone      = var.yc_infra.zone_id
+      subnet_id = data.yandex_vpc_subnet.subnet1.id
+    }
   }
 }
 
 resource "yandex_mdb_postgresql_user" "pg_user" {
-  cluster_id = yandex_mdb_postgresql_cluster.pg_cluster.id
+  cluster_id = yandex_mdb_postgresql_cluster_v2.pg_cluster.id
   name       = var.pg_cluster.db_user
   password   = var.pg_cluster.db_pass
 }
 
 resource "yandex_mdb_postgresql_database" "pg_db" {
-  cluster_id = yandex_mdb_postgresql_cluster.pg_cluster.id
+  cluster_id = yandex_mdb_postgresql_cluster_v2.pg_cluster.id
   name       = var.pg_cluster.db_name
   owner      = yandex_mdb_postgresql_user.pg_user.name
   lc_collate = "en_US.UTF-8"

@@ -9,7 +9,7 @@ module "zitadel-deploy" {
     cloud_id      = var.YC_CLOUD_ID
     folder_name   = "infra"
     zone_id       = "ru-central1-b"
-    dns_zone_name = "yclabs-net" # "mydomain-net"
+    dns_zone_name = "mydomain-net"
     network       = "infra-net"
     subnet1       = "infra-subnet-b"
   }

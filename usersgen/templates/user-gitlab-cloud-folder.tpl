@@ -79,12 +79,12 @@ resource "gitlab_project" "${USER_UNAME}" {
 }
 
 resource "yandex_resourcemanager_cloud" "${USER_UNAME}" {
-  organization_id = var.yc_org_id
+  organization_id = "${TPL_DATA.yc_org_id}"
   name            = "${USER_UNAME}"
 }
 
 resource "yandex_billing_cloud_binding" "${USER_UNAME}" {
-  billing_account_id = var.YC_BA_ID
+  billing_account_id = "${TPL_DATA.yc_ba_id}"
   cloud_id           = yandex_resourcemanager_cloud.${USER_UNAME}.id
 
   depends_on = [yandex_resourcemanager_cloud.${USER_UNAME}]

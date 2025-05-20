@@ -9,6 +9,7 @@ variable "yc_infra" {
   description = "YC Infra resources"
   type = object(
     {
+      project       = string
       cloud_id      = string
       folder_name   = string
       zone_id       = string
@@ -66,15 +67,16 @@ variable "zitadel_vm" {
   description = "Zitadel VM attributes"
   type = object(
     {
-      name           = string
-      vcpu           = number
-      ram            = number
-      disk_size      = number
-      image_family   = string # Base OS image
-      port           = string
-      jwt_path       = string
-      admin_user     = string
-      admin_key_file = string # Admin's SSH public key file
+      name            = string
+      public_dns_name = string
+      vcpu            = number
+      ram             = number
+      disk_size       = number
+      image_family    = string # Base OS image
+      port            = string
+      jwt_path        = string
+      admin_user      = string
+      admin_key_file  = string # Admin's SSH public key file
     }
   )
   validation {

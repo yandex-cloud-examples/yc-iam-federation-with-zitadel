@@ -6,7 +6,7 @@ terraform {
   required_providers {
     yandex = {
       source  = "yandex-cloud/yandex"
-      version = "~> 0.122.0"
+      version = "0.141.0"
     }
     null = {
       source  = "hashicorp/null"

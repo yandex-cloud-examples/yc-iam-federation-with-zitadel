@@ -7,3 +7,9 @@ variable "template_file" {
   description = "Template file for user resources"
   default     = "users.tpl"
 }
+
+variable "template_data" {
+  description = "Data for template"
+  type        = string
+  default     = ""
+}

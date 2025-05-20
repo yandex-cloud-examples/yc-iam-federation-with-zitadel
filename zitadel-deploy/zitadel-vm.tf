@@ -3,10 +3,10 @@
 # ====================
 
 locals {
-  zitadel_fqdn     = "${var.zitadel_vm.name}.${trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")}"
+  zitadel_fqdn     = "${var.zitadel_vm.public_dns_name}.${trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")}"
   zitadel_endpoint = "${local.zitadel_fqdn}:${var.zitadel_vm.port}"
   zitadel_base_url = "https://${local.zitadel_endpoint}"
-  jwt_key_file     = "${var.zitadel_vm.name}-sa.json"
+  jwt_key_file     = "zitadel-sa.json" # ${var.zitadel_vm.name}
 }
 
 # Service Account for Zitadel VM & their bindings
@@ -55,7 +55,7 @@ locals {
     CR_BASE_IMAGE = var.zitadel_cntr.cr_base_image
     ADMIN_NAME    = var.zitadel_vm.admin_user
     SA_NAME       = "${var.zitadel_vm.name}-sa"
-    DB_HOST       = yandex_mdb_postgresql_cluster.pg_cluster.host.0.fqdn
+    DB_HOST       = yandex_mdb_postgresql_cluster_v2.pg_cluster.hosts.node-d.fqdn
     DB_PORT       = var.pg_cluster.db_port
     DB_NAME       = var.pg_cluster.db_name
     DB_USER       = var.pg_cluster.db_user

@@ -6,18 +6,19 @@ module "zitadel-deploy" {
 
   # YC Infra and Network attributes
   yc_infra = {
+    project       = "myproject"
     cloud_id      = var.YC_CLOUD_ID
     folder_name   = "infra"
-    zone_id       = "ru-central1-b"
-    dns_zone_name = "yclabs-net" # "mydomain-net"
+    zone_id       = "ru-central1-d"
+    dns_zone_name = "mydomain-net"
     network       = "infra-net"
-    subnet1       = "infra-subnet-b"
+    subnet1       = "infra-subnet-d"
   }
 
   # PostgreSQL MDB Cluster attributes
   pg_cluster = {
-    name      = "zitadel-pg-cluster"
-    version   = "16"
+    name      = "myproject"
+    version   = "17"
     flavor    = "s2.medium"
     disk_size = 50 # Gigabytes
     db_name   = "zitadel-db"
@@ -32,7 +33,7 @@ module "zitadel-deploy" {
     cr_name         = "mirror.gcr.io"
     cr_base_image   = "ubuntu:24.04"
     zitadel_source  = "https://github.com/zitadel/zitadel/releases/download"
-    zitadel_version = "2.70.2"
+    zitadel_version = "3.0.4"
     zitadel_file    = "zitadel-linux-amd64.tar.gz"
     yq_source       = "https://github.com/mikefarah/yq/releases/download"
     yq_version      = "4.44.2"
@@ -41,15 +42,16 @@ module "zitadel-deploy" {
 
   # Zitadel VM attributes
   zitadel_vm = {
-    name           = "zita1" # "zitadel-vm"
-    vcpu           = 2
-    ram            = 8  # Gigabytes
-    disk_size      = 80 # Gigabytes
-    image_family   = "ubuntu-2404-lts-oslogin"
-    port           = "8443"
-    jwt_path       = "~/.ssh"
-    admin_user     = "admin"
-    admin_key_file = "~/.ssh/id_ed25519" # SSH Private key path
+    name            = "zitadel-vm"
+    public_dns_name = "idp" # idp.mydomain.net
+    vcpu            = 2
+    ram             = 8  # Gigabytes
+    disk_size       = 80 # Gigabytes
+    image_family    = "ubuntu-2404-lts"
+    port            = "8443"
+    jwt_path        = "~/.ssh"
+    admin_user      = "labadm"
+    admin_key_file  = "~/.ssh/id_ed25519" # SSH Private key path
   }
 }
 

@@ -1,18 +1,17 @@
-# ==================
-# Yandex Cloud users
-# ==================
+# ======================
+# Zitadel Users accounts
+# ======================
 
-zuser1:
-  fname: "First"
-  lname: "Firstov"
+swsuser1:
+  fname: "User1"
+  lname: "User1"
   lang: "en"
-  email: "first@myorg.org"
-  pass: "Th3mVxPz5#mIDXlL7P"
+  email: "first@mydom.net"
+  pass: "Th3m#492deP2ag"
 
-zuser2:
-  fname: "Second"
-  lname: "Secondov"
+swsuser2:
+  fname: "User2"
+  lname: "User2"
   lang: "en"
-  email: "second@myorg.org"
-  pass: "Zu#315-Piv21"
-
+  email: "second@mydom.net"
+  pass: "Fum951-BeP#a18"

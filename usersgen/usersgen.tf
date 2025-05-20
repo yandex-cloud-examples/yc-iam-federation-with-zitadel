@@ -18,6 +18,7 @@ locals {
         USER_LANG  = local.users_data[user].lang
         USER_EMAIL = local.users_data[user].email
         USER_PASS  = local.users_data[user].pass
+        TPL_DATA   = yamldecode(var.template_data)
       })
     }
   ])

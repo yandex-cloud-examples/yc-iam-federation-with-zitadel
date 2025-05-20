@@ -6,15 +6,15 @@ terraform {
   required_providers {
     yandex = {
       source  = "yandex-cloud/yandex"
-      version = "~> 0.122.0"
+      version = "~> 0.141.0"
     }
     zitadel = {
       source  = "zitadel/zitadel"
-      version = "~> 1.3.0"
+      version = "~> 2.2.0"
     }
     terracurl = {
       source  = "devops-rob/terracurl"
-      version = "~> 1.2.1"
+      version = "~> 1.2.2"
     }
     gitlab = {
       source  = "gitlabhq/gitlab"
