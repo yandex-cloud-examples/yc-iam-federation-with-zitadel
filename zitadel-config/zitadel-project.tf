@@ -4,7 +4,7 @@
 
 // Project
 resource "zitadel_project" "project" {
-  name                     = var.zitadel_org.project_name
+  name                     = "${var.zitadel_org.org_name}-project"
   org_id                   = zitadel_org.org.id
   project_role_assertion   = false
   project_role_check       = false
@@ -14,8 +14,8 @@ resource "zitadel_project" "project" {
 
 // Yandex Cloud Federation
 resource "yandex_organizationmanager_saml_federation" "yc_federation" {
-  name                         = var.zitadel_org.yc_fed_name
-  description                  = var.zitadel_org.yc_fed_descr
+  name                         = "${var.zitadel_org.org_name}-federation"
+  description                  = "${title(var.zitadel_org.org_name)} Zitadel Org"
   organization_id              = var.zitadel_org.yc_org_id
   issuer                       = "${var.system.base_url}/saml/v2/metadata"
   sso_url                      = "${var.system.base_url}/saml/v2/SSO"
@@ -64,13 +64,12 @@ locals {
   yc_fed_url = "https://auth.yandex.cloud/federations/${yandex_organizationmanager_saml_federation.yc_federation.id}"
 }
 
-// Zitadel SAML Application for YC Integration
+// Zitadel SAML Application for integration with YC Federation
 resource "zitadel_application_saml" "yc_saml" {
   org_id       = zitadel_org.org.id
   project_id   = zitadel_project.project.id
-  name         = var.zitadel_org.saml_app_name
+  name         = "${var.zitadel_org.org_name}-sampl-app"
   metadata_xml = "<?xml version=\"1.0\"?> <md:EntityDescriptor xmlns:md=\"urn:oasis:names:tc:SAML:2.0:metadata\" entityID=\"${local.yc_fed_url}\"> <md:SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"> <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat> <md:AssertionConsumerService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"${local.yc_fed_url}\" index=\"1\"/> </md:SPSSODescriptor>\n</md:EntityDescriptor>"
-  # validUntil=\"2025-01-26T17:48:38Z\" cacheDuration=\"PT604800S\"
 
   depends_on = [yandex_organizationmanager_saml_federation.yc_federation]
 }

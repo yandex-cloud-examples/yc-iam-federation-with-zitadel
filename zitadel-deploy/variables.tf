@@ -67,16 +67,15 @@ variable "zitadel_vm" {
   description = "Zitadel VM attributes"
   type = object(
     {
-      name            = string
-      public_dns_name = string
-      vcpu            = number
-      ram             = number
-      disk_size       = number
-      image_family    = string # Base OS image
-      port            = string
-      jwt_path        = string
-      admin_user      = string
-      admin_key_file  = string # Admin's SSH public key file
+      name           = string
+      vcpu           = number
+      ram            = number
+      disk_size      = number
+      image_family   = string # Base OS image
+      port           = string
+      jwt_path       = string
+      admin_user     = string
+      admin_key_file = string # Admin's SSH public key file
     }
   )
   validation {
@@ -103,6 +102,10 @@ output "infra_folder_id" {
 
 output "infra_dns_zone_name" {
   value = var.yc_infra.dns_zone_name
+}
+
+output "infra_dns_zone_id" {
+  value = data.yandex_dns_zone.dns_zone.id
 }
 
 output "admin_user" {

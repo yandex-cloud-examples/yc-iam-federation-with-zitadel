@@ -4,6 +4,7 @@ datasource:
   Ec2:
     strict_id: false
   pg_db: ${pg_db}
+  domain: ${domain}
   secrets:
     zita_masterkey: ${zita_masterkey}
     pg_host: ${pg_host}

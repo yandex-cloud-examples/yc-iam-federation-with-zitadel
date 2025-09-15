@@ -12,7 +12,8 @@ resource "zitadel_human_user" "${USER_UNAME}" {
   preferred_language = "${USER_LANG}"
   email              = "${USER_EMAIL}"
   is_email_verified  = true
-  initial_password   = local.init_pass
+  initial_password   = "${USER_PASS}"
+  initial_skip_password_change = true
 
   lifecycle {
     ignore_changes = [initial_password, display_name, phone, email]
@@ -99,7 +100,7 @@ resource "yandex_resourcemanager_folder" "${USER_UNAME}" {
 
 resource "yandex_resourcemanager_cloud_iam_member" "${USER_UNAME}_cloud_binding" {
   cloud_id = yandex_resourcemanager_cloud.${USER_UNAME}.id
-  role     = "editor"
+  role     = "resource-manager.clouds.member"
   member   = "federatedUser:$${yandex_organizationmanager_saml_federation_user_account.${USER_UNAME}.id}"
 }
 

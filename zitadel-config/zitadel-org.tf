@@ -4,59 +4,7 @@
 
 // Organization
 resource "zitadel_org" "org" {
-  name       = var.zitadel_org.org_name
-  is_default = true
-}
-
-locals {
-  init_pass = "VxP67@t4d-l3mI3%d285cM"
-}
-
-// Manager account for users management
-resource "zitadel_human_user" "manager" {
-  org_id             = zitadel_org.org.id
-  user_name          = var.zitadel_org.manager_uname
-  first_name         = var.zitadel_org.manager_fname
-  last_name          = var.zitadel_org.manager_lname
-  display_name       = "${var.zitadel_org.manager_fname} ${var.zitadel_org.manager_lname}"
-  preferred_language = var.zitadel_org.manager_lang
-  email              = var.zitadel_org.manager_email
-  is_email_verified  = true
-  initial_password   = local.init_pass
-
-  lifecycle {
-    ignore_changes = [initial_password, email]
-  }
-}
-
-# https://zitadel.com/docs/apis/resources/user_service/user-service-set-password
-resource "terracurl_request" "manager" {
-  name         = "admin"
-  url          = "${var.system.base_url}/v2beta/users/${zitadel_human_user.manager.id}/password"
-  method       = "POST"
-  request_body = <<EOF
-    {
-      "newPassword": { "password": "${var.zitadel_org.manager_pass}", "changeRequired": false },
-      "currentPassword": "${local.init_pass}"
-    }
-  EOF
-  headers = {
-    Authorization = "Bearer ${var.system.zt_token}"
-  }
-  response_codes = [200]
-
-  depends_on = [zitadel_human_user.manager]
-
-  lifecycle {
-    ignore_changes = [headers, request_body]
-  }
-}
-
-// Manager's role in organizaion
-resource "zitadel_org_member" "manager_org_role" {
-  org_id  = zitadel_org.org.id
-  user_id = zitadel_human_user.manager.id
-  roles   = ["${var.zitadel_org.manager_role}"]
+  name = var.zitadel_org.org_name
 }
 
 # =====================
@@ -82,6 +30,15 @@ resource "zitadel_login_policy" "default" {
   allow_domain_discovery        = true
   disable_login_with_email      = true
   disable_login_with_phone      = true
+}
+
+resource "zitadel_password_complexity_policy" "default" {
+  org_id        = zitadel_org.org.id
+  min_length    = "8"
+  has_uppercase = true
+  has_lowercase = true
+  has_number    = true
+  has_symbol    = false
 }
 
 resource "zitadel_domain_policy" "default" {

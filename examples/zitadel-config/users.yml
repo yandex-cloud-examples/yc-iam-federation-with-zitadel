@@ -2,16 +2,15 @@
 # Zitadel Users accounts
 # ======================
 
-swsuser1:
-  fname: "User1"
-  lname: "User1"
+sws1:
+  fname: "sws1"
+  lname: "sws1"
   lang: "en"
-  email: "first@mydom.net"
-  pass: "Th3m#492deP2ag"
-
-swsuser2:
-  fname: "User2"
-  lname: "User2"
+  email: "sws1@mydom.net"
+  pass: "19G8:EWMwOmE"
+sws2:
+  fname: "sws2"
+  lname: "sws2"
   lang: "en"
-  email: "second@mydom.net"
-  pass: "Fum951-BeP#a18"
+  email: "sws2@mydom.net"
+  pass: "JRAlmVJ:J3HU"

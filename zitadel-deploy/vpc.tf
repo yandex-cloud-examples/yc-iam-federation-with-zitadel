@@ -30,7 +30,7 @@ resource "yandex_vpc_address" "vm_pub_ip" {
 }
 
 # Create Security Group for VM
-resource "yandex_vpc_security_group" "vm_sg" {
+resource "yandex_vpc_security_group" "zitadel_vm_sg" {
   name       = "${var.zitadel_vm.name}-sg"
   folder_id  = data.yandex_resourcemanager_folder.folder.id
   network_id = data.yandex_vpc_network.net.id

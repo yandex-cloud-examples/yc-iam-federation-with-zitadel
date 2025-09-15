@@ -6,11 +6,10 @@ module "zitadel-deploy" {
 
   # YC Infra and Network attributes
   yc_infra = {
-    project       = "myproject"
     cloud_id      = var.YC_CLOUD_ID
     folder_name   = "infra"
     zone_id       = "ru-central1-b"
-    dns_zone_name = "mydomain-net"
+    dns_zone_name = "yclabs-net" # "mydomain-net"
     network       = "infra-net"
     subnet1       = "infra-subnet-b"
   }
@@ -42,16 +41,15 @@ module "zitadel-deploy" {
 
   # Zitadel VM attributes
   zitadel_vm = {
-    name            = "zitadel-vm"
-    public_dns_name = "idp" # idp.mydomain.net
-    vcpu            = 2
-    ram             = 8  # Gigabytes
-    disk_size       = 80 # Gigabytes
-    image_family    = "ubuntu-2204-lts"
-    port            = "8443"
-    jwt_path        = "~/.ssh"
-    admin_user      = "admin"
-    admin_key_file  = "~/.ssh/id_ed25519" # SSH Private key path
+    name           = "zita1" # "zitadel-vm"
+    vcpu           = 2
+    ram            = 8  # Gigabytes
+    disk_size      = 80 # Gigabytes
+    image_family   = "ubuntu-2204-lts"
+    port           = "8443"
+    jwt_path       = "~/.ssh"
+    admin_user     = "admin"
+    admin_key_file = "~/.ssh/id_ed25519" # SSH Private key path
   }
 }
 

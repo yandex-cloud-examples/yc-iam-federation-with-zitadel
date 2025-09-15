@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get FQDN
-export ZITADEL_EXTERNALDOMAIN=$(curl -sf -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/description)
+export ZITADEL_EXTERNALDOMAIN=$(curl -sf -H Metadata-Flavor:Google 169.254.169.254/latest/user-data | yq '.datasource.domain')
 
 # Get IAM-Token
 export YC_TOKEN=$(curl -sf -H Metadata-Flavor:Google 169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token | jq -r .access_token)

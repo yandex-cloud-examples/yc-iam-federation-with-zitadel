@@ -24,9 +24,6 @@ locals {
   ])
 }
 
-# Check user's password at TF state:
-# terraform state show module.zitadel-config.terracurl_request.admin | grep newPassword | awk -F'"' '{print $6}'
-
 resource "local_file" "users_tf_file" {
   content         = join("", local.users_tf_data[*].user_tf_code)
   filename        = local.users_out

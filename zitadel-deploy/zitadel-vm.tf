@@ -3,17 +3,17 @@
 # ====================
 
 locals {
-  zitadel_fqdn     = "${var.zitadel_vm.public_dns_name}.${trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")}"
+  zitadel_fqdn     = trimsuffix(data.yandex_dns_zone.dns_zone.zone, ".")
   zitadel_endpoint = "${local.zitadel_fqdn}:${var.zitadel_vm.port}"
   zitadel_base_url = "https://${local.zitadel_endpoint}"
-  jwt_key_file     = "zitadel-sa.json" # ${var.zitadel_vm.name}
+  jwt_key_file     = "zitadel-sa.json"
 }
 
 # Service Account for Zitadel VM & their bindings
 resource "yandex_iam_service_account" "zita_vm_sa" {
   folder_id   = data.yandex_resourcemanager_folder.folder.id
   name        = "${var.zitadel_vm.name}-sa"
-  description = "Service account for ${var.zitadel_vm.name} VM"
+  description = "Service account for ${var.zitadel_vm.name}"
 }
 
 resource "yandex_lockbox_secret_iam_binding" "zita_masterkey" {
@@ -34,7 +34,7 @@ resource "yandex_lockbox_secret_iam_binding" "pg_user" {
   members   = ["serviceAccount:${yandex_iam_service_account.zita_vm_sa.id}"]
 }
 
-resource "yandex_resourcemanager_folder_iam_binding" "cm_certs" {
+resource "yandex_resourcemanager_folder_iam_binding" "le_cert_binding" {
   folder_id = data.yandex_resourcemanager_folder.folder.id
   role      = "certificate-manager.certificates.downloader"
   members   = ["serviceAccount:${yandex_iam_service_account.zita_vm_sa.id}"]
@@ -54,7 +54,7 @@ locals {
     CR_NAME       = var.zitadel_cntr.cr_name
     CR_BASE_IMAGE = var.zitadel_cntr.cr_base_image
     ADMIN_NAME    = var.zitadel_vm.admin_user
-    SA_NAME       = "${var.zitadel_vm.name}-sa"
+    SA_NAME       = local.jwt_key_file
     DB_HOST       = yandex_mdb_postgresql_cluster_v2.pg_cluster.hosts.node-d.fqdn
     DB_PORT       = var.pg_cluster.db_port
     DB_NAME       = var.pg_cluster.db_name
@@ -66,15 +66,15 @@ locals {
 }
 
 # Create Zitadel VM
-data "yandex_compute_image" "vm_image" {
+data "yandex_compute_image" "zitadel_vm_image" {
   family = var.zitadel_vm.image_family
 }
 
-resource "yandex_compute_instance" "zita_vm1" {
+resource "yandex_compute_instance" "zitadel_vm1" {
   folder_id          = data.yandex_resourcemanager_folder.folder.id
   name               = var.zitadel_vm.name
   hostname           = var.zitadel_vm.name
-  description        = local.zitadel_fqdn
+  description        = "Public FQDN: ${local.zitadel_fqdn}"
   platform_id        = "standard-v3"
   zone               = data.yandex_vpc_subnet.subnet1.zone
   service_account_id = yandex_iam_service_account.zita_vm_sa.id
@@ -86,7 +86,7 @@ resource "yandex_compute_instance" "zita_vm1" {
 
   boot_disk {
     initialize_params {
-      image_id = data.yandex_compute_image.vm_image.id
+      image_id = data.yandex_compute_image.zitadel_vm_image.id
       type     = "network-ssd"
       size     = var.zitadel_vm.disk_size
     }
@@ -96,7 +96,7 @@ resource "yandex_compute_instance" "zita_vm1" {
     subnet_id          = data.yandex_vpc_subnet.subnet1.id
     nat                = true
     nat_ip_address     = yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address
-    security_group_ids = [yandex_vpc_security_group.vm_sg.id]
+    security_group_ids = [yandex_vpc_security_group.zitadel_vm_sg.id]
   }
 
   # Build CloudInit config
@@ -108,7 +108,8 @@ resource "yandex_compute_instance" "zita_vm1" {
       pg_host        = yandex_lockbox_secret.pg_host.id
       pg_db          = var.pg_cluster.db_name
       pg_user        = yandex_lockbox_secret.pg_user.id
-      cert_id        = yandex_cm_certificate.vm_le_cert.id
+      cert_id        = yandex_cm_certificate.domain_le_cert.id
+      domain         = local.domain
     })
   }
 
@@ -154,5 +155,5 @@ resource "null_resource" "copy_jwt_key" {
     ssh ${var.zitadel_vm.admin_user}@${yandex_vpc_address.vm_pub_ip.external_ipv4_address[0].address} rm ${local.jwt_key_file}
     CMD
   }
-  depends_on = [yandex_compute_instance.zita_vm1]
+  depends_on = [yandex_compute_instance.zitadel_vm1]
 }
