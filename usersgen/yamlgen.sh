@@ -31,10 +31,11 @@ for cnt in $(seq 1 $USER_COUNT); do
   usr=$USER_PREFIX$cnt
   eml=$usr@$USER_DOMAIN
 
-  pass=$(openssl rand -base64 12)
-  if [[ ! "$pass" =~ [0-9] ]]; then :
-    pass=${RANDOM:0:1}$pass
-  fi
+  pass=$(openssl rand -base64 12 | tr -d '+/=\n')
+  lc=$(openssl rand -base64 12 | tr -dc 'a-z' | head -c 2)
+  uc=$(openssl rand -base64 12 | tr -dc 'A-Z' | head -c 2)
+  sc=$(LC_ALL=C tr -dc '\-#' < /dev/urandom | head -c 2)
+  pass="${lc}${uc}${sc}${pass:0:6}"
 
   echo $usr:
   echo "  fname: \"$usr\""
