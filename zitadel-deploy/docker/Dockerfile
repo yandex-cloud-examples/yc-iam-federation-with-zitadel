@@ -17,11 +17,11 @@ RUN \
   curl -sL https://storage.yandexcloud.net/cloud-certs/CA.pem -o /usr/local/share/ca-certificates/yc-ca && \
   update-ca-certificates && \
   # Install yq tool
-  curl -sLO $YQ_SRC/v$YQ_VER/$YQ_FILE && \
+  curl -fsSL --max-time 600 --retry 5 --retry-delay 10 --connect-timeout 30 -O $YQ_SRC/v$YQ_VER/$YQ_FILE && \
   mv $YQ_FILE /usr/local/bin/yq && \
   chmod a+x /usr/local/bin/yq && \
   # Install target version of Zitadel
-  curl -sLO $ZT_SRC/v$ZT_VER/$ZT_FILE && \
+  curl -fsSL --max-time 600 --retry 5 --retry-delay 10 --connect-timeout 30 -O $ZT_SRC/v$ZT_VER/$ZT_FILE && \
   tar -zxf $ZT_FILE --wildcards '*zitadel' --strip-components=1 && \
   mkdir -p /opt/zitadel && \
   mv zitadel /opt/zitadel/ && \

@@ -1,3 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
 # Global Ubuntu things
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 timedatectl set-timezone Europe/Moscow
